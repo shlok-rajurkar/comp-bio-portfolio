@@ -1,0 +1,313 @@
+//GGE particle size macro for ImageJ to replace GGE7A3 on NIHImage.
+
+
+function main() {
+    initialize();
+    setStandards();
+    
+    moreLanes = true;
+    while (moreLanes) {
+        quantifyLane();
+        moreLanes = getBoolean("Analyze more lanes?");
+    }
+}
+
+main();
+
+var stdWeights;
+var stdRfVals;
+var slopeAndInterceptArray;
+var imageWidth;
+var imageHeight;
+var xnum;
+var c = 0;
+var z = 0;
+var t = 0;
+var cubicCoeffArray;
+
+function calcRfVals(xVals, imgLength) {
+    result = newArray(xVals.length);
+    for (i = 0; i < xVals.length; i ++) {
+        result[i] = xVals[i]/imgLength;
+    }
+    return result;
+}
+
+function log10Array(array) {
+    logValues = newArray(array.length);
+    for (i = 0; i < array.length; i++){
+        logValues[i] = log(array[i])/log(10);
+    }
+    return logValues;
+}
+
+function inverseLog10Array(array) {
+    inverseLogValues = newArray(array.length);
+    for (i = 0; i < array.length; i++){
+        inverseLogValues[i] = pow(10, array[i]);
+    }
+    return inverseLogValues;
+}
+
+function getRfValsFromLane() {
+    run("Plot Lanes");
+
+    run("Remove Overlay");
+
+    setTool("multi-point");
+
+    waitForUser("Mark the peaks with the multipoint tool, then press OK. \nOnly mark them from left to right, in increasing weight/diameter.");
+
+    getSelectionCoordinates(xpoints, ypoints);
+
+    nPoints = xpoints.length;
+
+    xVals = newArray(nPoints);
+
+    for (i = 0; i < nPoints; i++) {
+        xVals[i] = xpoints[i];
+    }
+
+    getDimensions(imageWidth, imageHeight, c, z, t);
+
+    RfVals = calcRfVals(xVals, imageWidth);
+
+    return RfVals;    
+}
+
+function OLSRegression(xValsForRegression, yValsForRegression) {
+    xLength = xValsForRegression.length;
+    yLength = yValsForRegression.length;
+
+    xTotal = 0;
+    yTotal = 0;
+
+    for(i = 0; i < xLength; i++) {
+        xTotal += xValsForRegression[i];
+        yTotal += yValsForRegression[i];
+    }
+    xMean = xTotal/xLength;
+    yMean = yTotal/yLength;
+
+    numerator = 0;
+    denominator = 0;
+
+    for(i = 0; i < xLength; i++) {
+        dx = xValsForRegression[i] - xMean;
+        dy = yValsForRegression[i] - yMean;
+        numerator += dx * dy;
+        denominator += dx * dx;
+    }
+
+    regressionSlope = numerator/denominator;
+
+    regressionIntercept = yMean - regressionSlope * xMean;
+
+    return newArray(regressionSlope, regressionIntercept);
+}
+
+function calcStdCurveLinear(stdRfValues, log10StdWeights) {
+    slopeAndInterceptArray = OLSRegression(stdRfValues, log10StdWeights);  
+    return slopeAndInterceptArray;  
+}
+
+function calcStdCurveCubic(xVals, yVals) {
+    n = xVals.length;
+
+    sumX = newArray(7);
+    for (i = 0; i <= 6; i++) sumX[i] = 0;
+    sumXY = newArray(4);
+    for (i = 0; i <= 3; i++) sumXY[i] = 0;
+
+    for (i = 0; i < n; i++) {
+        x = xVals[i];
+        y = yVals[i];
+        powX = newArray(7);
+        powX[0] = 1;
+        for (j = 1; j <= 6; j++) powX[j] = powX[j - 1] * x;
+
+        for (j = 0; j <= 6; j++) sumX[j] += powX[j];
+        for (j = 0; j <= 3; j++) sumXY[j] += powX[j] * y;
+    }
+
+    // Flattened 4x4 matrix A
+    A = newArray(16);
+    for (i = 0; i <= 3; i++) {
+        for (j = 0; j <= 3; j++) {
+            A[i * 4 + j] = sumX[i + j];
+        }
+    }
+
+    B = sumXY;
+
+    coeffs = gaussJordanFlat4x4(A, B);
+    return coeffs; // [a, b, c, d]
+}
+
+function gaussJordanFlat4x4(A, B) {
+    n = 4;
+
+    for (i = 0; i < n; i++) {
+        // Find non-zero pivot
+        if (A[i * 4 + i] == 0) {
+            for (j = i + 1; j < n; j++) {
+                if (A[j * 4 + i] != 0) {
+                    // Swap rows in A
+                    for (k = 0; k < n; k++) {
+                        temp = A[i * 4 + k];
+                        A[i * 4 + k] = A[j * 4 + k];
+                        A[j * 4 + k] = temp;
+                    }
+                    // Swap B
+                    tmpB = B[i];
+                    B[i] = B[j];
+                    B[j] = tmpB;
+                    break;
+                }
+            }
+        }
+
+        // Normalize row
+        factor = A[i * 4 + i];
+        for (j = 0; j < n; j++) A[i * 4 + j] /= factor;
+        B[i] /= factor;
+
+        // Eliminate other rows
+        for (j = 0; j < n; j++) {
+            if (j != i) {
+                factor = A[j * 4 + i];
+                for (k = 0; k < n; k++) {
+                    A[j * 4 + k] -= factor * A[i * 4 + k];
+                }
+                B[j] -= factor * B[i];
+            }
+        }
+    }
+
+    return B;
+}
+
+
+
+//Initialize and set all vars to 0 or None
+function initialize() {
+
+
+    stdWeights = newArray(0);
+    stdRfVals = newArray(0);
+    slopeAndInterceptArray = newArray(0);
+    imageWidth = 0
+    imageHeight = 0
+    xnum = ""
+
+    run("Set Measurements...", "  redirect=None decimal=1");
+    run("Gel Analyzer Options...", "vertical=1 horizontal=1 label invert");
+
+    xnum = getString("enter X number", "");
+    
+    setTool("Rectangle");
+
+    getDimensions(imageWidth, imageHeight, c, z, t);
+    makeRectangle(0.3*imageWidth, 0.18*imageHeight, 0.36*imageWidth, 0.53*imageHeight);
+    waitForUser("Adjust rectangle to bound lanes and leave minimal space between top of image and top of gel. \nPressing OK will crop gel and rotate 90 degrees left.");
+
+    run("Crop");
+    wait(100);
+    run("Rotate 90 Degrees Left");
+
+}
+
+
+function setStandards() {
+    numberOfStandards = getNumber("enter number of standards", 5);
+    stdWeights = newArray(numberOfStandards);
+
+    for(i = 0; i < numberOfStandards; i++){
+        stdIndexDisplay = i + 1;
+        stdWeights[i] = getNumber("enter weight of standard " + stdIndexDisplay, 0);
+    }
+    print("Std weights:");
+    Array.print(stdWeights);
+
+    //create rectangle 5-10 pixels wide (prompt user?) and length of the whole image.
+
+    setTool("Rectangle");
+
+    getDimensions(imageWidth, imageHeight, c, z, t)
+
+    usePresetRectangle = getBoolean('Use ROI preset?');
+
+    if (usePresetRectangle) {
+        makeRectangle(0, (imageHeight/2)-10 , imageWidth, 20);
+        waitForUser("Adjust rectangle to span lane with standards. \nIt can be quite thin as long as it contains some part of the lane.");
+    }
+    else {
+        waitForUser("Draw rectangle from left to right of lane with standards. \nIt can be quite thin as long as it contains some part of the lane. Pressing OK will select this lane.");
+    }
+
+
+    
+
+
+    //could potentially use height of image to automatically place 
+
+    run("Select First Lane");
+
+    //prompt user to mark standards on standard lane
+
+    run("Plot Lanes");
+
+    stdXVals = newArray(numberOfStandards);
+
+    setTool("multi-point");
+
+    waitForUser("Mark the peaks with the multipoint tool, then press OK.");
+
+    getSelectionCoordinates(xpoints, ypoints);
+
+    nPoints = xpoints.length;
+
+    for (i = 0; i < nPoints; i++) {
+        stdXVals[i] = xpoints[i];
+    }
+
+    //Array.print(stdXVals);
+
+    getDimensions(imageWidth, imageHeight, c, z, t);
+
+    stdRfVals = calcRfVals(stdXVals, imageWidth);
+    //Array.print(stdRfVals);
+    log10StdWeights = log10Array(stdWeights);
+    //Array.print(log10StdWeights);
+    //slopeAndInterceptArray = calcStdCurveLinear(stdRfVals, log10StdWeights);
+    //print("Slope and Intercept:");
+    //Array.print(slopeAndInterceptArray);
+    cubicCoeffArray = calcStdCurveCubic(stdRfVals, log10StdWeights);
+    //Array.print(cubicCoeffArray);
+
+    
+}
+
+
+function quantifyLane() {
+    if (stdRfVals.length == 0 || stdWeights.length == 0){
+        exit("Standards not set.");
+    }
+
+    waitForUser("Drag rectangle to sample lane and press OK.");
+
+    run("Select First Lane");
+
+    laneRfVals = getRfValsFromLane();
+    //Array.print(laneRfVals);
+    laneMolecularWeightsCalc = newArray(laneRfVals.length);
+    for (i = 0; i < laneRfVals.length; i++) {
+        x = laneRfVals[i];
+        laneMolecularWeightsCalc[i] = cubicCoeffArray[0] + cubicCoeffArray[1]*x + cubicCoeffArray[2]*x*x + cubicCoeffArray[3]*x*x*x;
+    //    laneMolecularWeightsCalc[i] = slopeAndInterceptArray[0] * laneRfVals[i] + slopeAndInterceptArray[1];
+    }
+    displayValueArray = inverseLog10Array(laneMolecularWeightsCalc);
+    print("Calculated:");
+    Array.print(displayValueArray);
+
+}
