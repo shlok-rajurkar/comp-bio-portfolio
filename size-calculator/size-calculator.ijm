@@ -86,6 +86,8 @@ function getRfValsFromLane() {
 
     getSelectionCoordinates(originXVal, originYVal);
 
+    if 
+
     waitForUser("Mark the peaks with the multipoint tool, then press OK. \nOnly mark them from left to right, in increasing weight/diameter.");
 
     getSelectionCoordinates(xpoints, ypoints);
@@ -265,15 +267,18 @@ function setStandards() {
 
     getDimensions(imageWidth, imageHeight, c, z, t);
 
-    usePresetRectangle = getBoolean('Use ROI preset?');
+    makeRectangle(0, (imageHeight/2)-10 , imageWidth, 20);
+    waitForUser("Adjust rectangle to span lane with standards. \nIt can be quite thin as long as it contains some part of the lane.");
 
-    if (usePresetRectangle) {
-        makeRectangle(0, (imageHeight/2)-10 , imageWidth, 20);
-        waitForUser("Adjust rectangle to span lane with standards. \nIt can be quite thin as long as it contains some part of the lane.");
-    }
-    else {
-        waitForUser("Draw rectangle from left to right of lane with standards. \nIt can be quite thin as long as it contains some part of the lane. Pressing OK will select this lane.");
-    }
+    //usePresetRectangle = getBoolean('Use ROI preset?');
+
+    //if (usePresetRectangle) {
+    //    makeRectangle(0, (imageHeight/2)-10 , imageWidth, 20);
+    //    waitForUser("Adjust rectangle to span lane with standards. \nIt can be quite thin as long as it contains some part of the lane.");
+    //}
+    //else {
+    //    waitForUser("Draw rectangle from left to right of lane with standards. \nIt can be quite thin as long as it contains some part of the lane. Pressing OK will select this lane.");
+    //}
 
     
     run("Select First Lane");
