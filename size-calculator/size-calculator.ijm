@@ -1,19 +1,44 @@
 //GGE particle size macro for ImageJ to replace GGE7A3 on NIHImage.
 
+main();
+
 
 function main() {
     initialize();
-    setStandards();
-    
+    getStandards();
+    cubicRegression(stdRfVals, stdWeights);
+    getLanes();
+    }
+
+
+function getStandards() {
+    stdWeights = newArray(0);
+    stdRfVals = newArray(0);
+    moreStandards = true;
+    while (moreStandards) {
+        stdWeightsTempAndStdRfValsTemp = setStandards();
+        arrayLength = stdWeightsTempAndStdRfValsTemp.length;
+        stdWeightsToAdd = Array.slice(stdWeightsTempAndStdRfValsTemp, 0, (arrayLength/2));
+        stdRfValsToAdd = Array.slice(stdWeightsTempAndStdRfValsTemp, (arrayLength/2), arrayLength);
+        Array.print(stdWeightsToAdd);
+        Array.print(stdRfValsToAdd);
+        stdWeights = Array.concat(stdWeights, stdWeightsToAdd);
+        stdRfVals = Array.concat(stdRfVals, stdRfValsToAdd);
+        stdWeights = Array.sort(stdWeights);
+        stdRfVals = Array.sort(stdRfVals);
+        Array.print(stdWeights);
+        Array.print(stdRfVals);
+        moreStandards = getBoolean("Add more standard lanes?");
+    }
+}
+
+function getLanes() {
     moreLanes = true;
     while (moreLanes) {
         quantifyLane();
         moreLanes = getBoolean("Analyze more lanes?");
     }
 }
-
-main();
-
 var stdWeights;
 var stdRfVals;
 var slopeAndInterceptArray;
@@ -24,6 +49,7 @@ var c = 0;
 var z = 0;
 var t = 0;
 var cubicCoeffArray;
+var croppedGelWindow;
 
 function calcRfVals(xVals, imgLength) {
     result = newArray(xVals.length);
@@ -56,6 +82,10 @@ function getRfValsFromLane() {
 
     setTool("multi-point");
 
+    waitForUser("Mark origin of lane, then press OK.");
+
+    getSelectionCoordinates(originXVal, originYVal);
+
     waitForUser("Mark the peaks with the multipoint tool, then press OK. \nOnly mark them from left to right, in increasing weight/diameter.");
 
     getSelectionCoordinates(xpoints, ypoints);
@@ -68,9 +98,11 @@ function getRfValsFromLane() {
         xVals[i] = xpoints[i];
     }
 
+    xVals = Array.slice(xVals, 1, xVals.length);
+
     getDimensions(imageWidth, imageHeight, c, z, t);
 
-    RfVals = calcRfVals(xVals, imageWidth);
+    RfVals = calcRfVals(xVals, imageWidth-originXVal[0]);
 
     return RfVals;    
 }
@@ -189,12 +221,11 @@ function gaussJordanFlat4x4(A, B) {
 
 
 
-//Initialize and set all vars to 0 or None
 function initialize() {
 
 
-    stdWeights = newArray(0);
-    stdRfVals = newArray(0);
+    //stdWeights = newArray(0);
+    //stdRfVals = newArray(0);
     slopeAndInterceptArray = newArray(0);
     imageWidth = 0
     imageHeight = 0
@@ -214,26 +245,25 @@ function initialize() {
     run("Crop");
     wait(100);
     run("Rotate 90 Degrees Left");
-
+    croppedGelWindow = File.name
 }
 
 
 function setStandards() {
+    selectWindow(croppedGelWindow);
     numberOfStandards = getNumber("enter number of standards", 5);
-    stdWeights = newArray(numberOfStandards);
-
+    stdWeightsTemp = newArray(numberOfStandards);
+    stdRfValsTemp = newArray(numberOfStandards);
     for(i = 0; i < numberOfStandards; i++){
         stdIndexDisplay = i + 1;
-        stdWeights[i] = getNumber("enter weight of standard " + stdIndexDisplay, 0);
+        stdWeightsTemp[i] = getNumber("enter weight of standard " + stdIndexDisplay, 0);
     }
     print("Std weights:");
-    Array.print(stdWeights);
-
-    //create rectangle 5-10 pixels wide (prompt user?) and length of the whole image.
+    Array.print(stdWeightsTemp);
 
     setTool("Rectangle");
 
-    getDimensions(imageWidth, imageHeight, c, z, t)
+    getDimensions(imageWidth, imageHeight, c, z, t);
 
     usePresetRectangle = getBoolean('Use ROI preset?');
 
@@ -245,54 +275,30 @@ function setStandards() {
         waitForUser("Draw rectangle from left to right of lane with standards. \nIt can be quite thin as long as it contains some part of the lane. Pressing OK will select this lane.");
     }
 
-
     
-
-
-    //could potentially use height of image to automatically place 
-
     run("Select First Lane");
 
-    //prompt user to mark standards on standard lane
-
-    run("Plot Lanes");
-
-    stdXVals = newArray(numberOfStandards);
-
-    setTool("multi-point");
-
-    waitForUser("Mark the peaks with the multipoint tool, then press OK.");
-
-    getSelectionCoordinates(xpoints, ypoints);
-
-    nPoints = xpoints.length;
-
-    for (i = 0; i < nPoints; i++) {
-        stdXVals[i] = xpoints[i];
-    }
-
-    //Array.print(stdXVals);
-
-    getDimensions(imageWidth, imageHeight, c, z, t);
-
-    stdRfVals = calcRfVals(stdXVals, imageWidth);
-    //Array.print(stdRfVals);
-    log10StdWeights = log10Array(stdWeights);
-    //Array.print(log10StdWeights);
-    //slopeAndInterceptArray = calcStdCurveLinear(stdRfVals, log10StdWeights);
-    //print("Slope and Intercept:");
-    //Array.print(slopeAndInterceptArray);
-    cubicCoeffArray = calcStdCurveCubic(stdRfVals, log10StdWeights);
-    //Array.print(cubicCoeffArray);
+    stdRfValsTemp = getRfValsFromLane();
+    Array.print(stdRfValsTemp);
+    stdWeightsTempAndStdRfValsTemp = Array.concat(stdWeightsTemp, stdRfValsTemp);
+    return stdWeightsTempAndStdRfValsTemp;
 
     
 }
 
+function cubicRegression(stdRfValues, stdWeights) {
+    log10StdWeights = log10Array(stdWeights);
+    cubicCoeffArray = calcStdCurveCubic(stdRfVals, log10StdWeights);
+    Array.print(cubicCoeffArray);
+    return cubicCoeffArray;
+}
 
-function quantifyLane() {
+function quantifyLane(cubicCoeffArray) {
     if (stdRfVals.length == 0 || stdWeights.length == 0){
         exit("Standards not set.");
     }
+
+    selectWindow(croppedGelWindow);
 
     waitForUser("Drag rectangle to sample lane and press OK.");
 
