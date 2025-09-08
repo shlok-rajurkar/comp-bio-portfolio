@@ -86,8 +86,6 @@ function getRfValsFromLane() {
 
     getSelectionCoordinates(originXVal, originYVal);
 
-    if 
-
     waitForUser("Mark the peaks with the multipoint tool, then press OK. \nOnly mark them from left to right, in increasing weight/diameter.");
 
     getSelectionCoordinates(xpoints, ypoints);
