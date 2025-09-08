@@ -293,7 +293,7 @@ function cubicRegression(stdRfValues, stdWeights) {
     return cubicCoeffArray;
 }
 
-function quantifyLane(cubicCoeffArray) {
+function quantifyLane() {
     if (stdRfVals.length == 0 || stdWeights.length == 0){
         exit("Standards not set.");
     }
