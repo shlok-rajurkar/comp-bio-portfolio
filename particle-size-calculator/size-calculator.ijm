@@ -233,7 +233,7 @@ function initialize() {
     imageHeight = 0
     xnum = ""
 
-    run("Set Measurements...", "  redirect=None decimal=1");
+    run("Set Measurements...", "redirect=None decimal=1");
     run("Gel Analyzer Options...", "vertical=1 horizontal=1 label");
 
     xnum = getString("enter X number", "");
