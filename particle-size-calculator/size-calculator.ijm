@@ -226,7 +226,7 @@ function initialize() {
 
     //stdWeights = newArray(0);
     //stdRfVals = newArray(0);
-    slopeAndInterceptArray = newArray(0);
+    //slopeAndInterceptArray = newArray(0);
     imageWidth = 0
     imageHeight = 0
     xnum = ""
@@ -245,7 +245,8 @@ function initialize() {
     run("Crop");
     wait(100);
     run("Rotate 90 Degrees Left");
-    croppedGelWindow = File.name
+    croppedGelWindow = File.name;
+    print(xnum + " Analysis:")
 }
 
 
