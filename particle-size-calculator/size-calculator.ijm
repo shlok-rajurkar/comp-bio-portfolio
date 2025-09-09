@@ -25,6 +25,7 @@ function getStandards() {
         stdWeights = Array.concat(stdWeights, stdWeightsToAdd);
         stdRfVals = Array.concat(stdRfVals, stdRfValsToAdd);
         stdWeights = Array.sort(stdWeights);
+        stdWeights = Array.reverse(stdWeights);
         stdRfVals = Array.sort(stdRfVals);
         Array.print(stdWeights);
         Array.print(stdRfVals);
@@ -50,6 +51,7 @@ var z = 0;
 var t = 0;
 var cubicCoeffArray;
 var croppedGelWindow;
+var originXVal;
 
 function calcRfVals(xVals, imgLength) {
     result = newArray(xVals.length);
@@ -309,15 +311,94 @@ function quantifyLane() {
     run("Select First Lane");
 
     laneRfVals = getRfValsFromLane();
-    //Array.print(laneRfVals);
+
     laneMolecularWeightsCalc = newArray(laneRfVals.length);
     for (i = 0; i < laneRfVals.length; i++) {
         x = laneRfVals[i];
         laneMolecularWeightsCalc[i] = cubicCoeffArray[0] + cubicCoeffArray[1]*x + cubicCoeffArray[2]*x*x + cubicCoeffArray[3]*x*x*x;
-    //    laneMolecularWeightsCalc[i] = slopeAndInterceptArray[0] * laneRfVals[i] + slopeAndInterceptArray[1];
     }
     displayValueArray = inverseLog10Array(laneMolecularWeightsCalc);
     print("Calculated:");
     Array.print(displayValueArray);
+
+    quantBins() {
+        
+    }
+    originXVal = 0;
+
+}
+
+function inverseLog10Array(array) {
+    inverseLogValues = newArray(array.length);
+    for (i = 0; i < array.length; i++){
+        inverseLogValues[i] = pow(10, array[i]);
+    }
+    return inverseLogValues;
+}
+
+imageWidth = 1500;
+originXVal = 100;
+cubicCoeffArray = newArray(2.0490, 0.0341, -0.8621, -0.1735);
+
+function calcPxFromBins() {
+    bins = newArray(
+    375, 339, 321, 315, 309, 303, 297, 291, 285, 272, 265, 256, 247, 242, 233, 220
+    );
+    bins = newArray(
+       96 , 111, 100, 96, 37, 28
+    );
+    laneLength = imageWidth-originXVal;
+    binCount = bins.length; 
+    everyPixel = newArray(laneLength);
+    for (i = 0; i < laneLength; i ++) {
+        everyPixel[i] = i;
+    }
+    //print('every pixel:');
+    //Array.print(everyPixel);
+    everyRfValue = newArray(laneLength);
+    everyLogMW = newArray(laneLength);
+    for (i = 0; i < laneLength; i ++) {
+        everyRfValue[i] = everyPixel[i]/laneLength;
+    }
+    //Array.print(everyRfValue);
+    for (i = 0; i < laneLength; i ++) {
+            everyLogMW[i] = cubicCoeffArray[0] + cubicCoeffArray[1]*everyRfValue[i] + cubicCoeffArray[2]*everyRfValue[i]*everyRfValue[i] + cubicCoeffArray[3]*everyRfValue[i]*everyRfValue[i]*everyRfValue[i];
+    }
+    //print('everyMW');
+    everyMW = inverseLog10Array(everyLogMW);
+    print(everyMW[0]);
+    print(everyMW[100]);
+    print(everyMW[200]);
+    print(everyMW[350]);
+    print(everyMW[400]);
+    print(everyMW[1000]);
+    print(everyMW[1100]);
+    binPxValues = newArray(binCount);
+    Array.print(binPxValues);
+    for (j = 0; j < bins.length; j ++) {
+        everyMWCopy = everyMW;
+        for (i = 0; i < laneLength; i ++) {
+            everyMWCopy[i] = abs(everyMWCopy[i] - bins[j]);
+        }
+        print(everyMWCopy[0]);
+
+        Array.getStatistics(everyMWCopy, min, max, mean, stdDev);
+        print(min);
+
+        for (i = 0; i < laneLength; i ++) {
+            if (everyMWCopy[i] == min) {
+                binPxValues[j] = i;
+                //print(binPxValues[j]);
+                print(j);
+            }
+        }
+    }
+    Array.print(binPxValues);
+}
+
+calcPxFromBins();
+
+
+function quantBins() {
 
 }
