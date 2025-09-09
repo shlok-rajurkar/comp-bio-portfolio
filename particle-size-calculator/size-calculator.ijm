@@ -232,7 +232,7 @@ function initialize() {
     xnum = ""
 
     run("Set Measurements...", "  redirect=None decimal=1");
-    run("Gel Analyzer Options...", "vertical=1 horizontal=1 label invert");
+    run("Gel Analyzer Options...", "vertical=1 horizontal=1 label");
 
     xnum = getString("enter X number", "");
     
@@ -246,7 +246,7 @@ function initialize() {
     wait(100);
     run("Rotate 90 Degrees Left");
     croppedGelWindow = File.name;
-    print(xnum + " Analysis:")
+    print(xnum + " Analysis:");
 }
 
 
