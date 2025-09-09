@@ -339,13 +339,13 @@ function inverseLog10Array(array) {
 imageWidth = 1500;
 originXVal = 100;
 cubicCoeffArray = newArray(2.0490, 0.0341, -0.8621, -0.1735);
-
+print("-------------------------------------------------------");
 function calcPxFromBins() {
     bins = newArray(
     375, 339, 321, 315, 309, 303, 297, 291, 285, 272, 265, 256, 247, 242, 233, 220
     );
     bins = newArray(
-       96 , 111, 100, 96, 37, 28
+    96, 111, 100, 96, 37, 28
     );
     laneLength = imageWidth-originXVal;
     binCount = bins.length; 
@@ -360,36 +360,41 @@ function calcPxFromBins() {
     for (i = 0; i < laneLength; i ++) {
         everyRfValue[i] = everyPixel[i]/laneLength;
     }
-    //Array.print(everyRfValue);
+    print('every Rf value:');
+    Array.print(everyRfValue);
     for (i = 0; i < laneLength; i ++) {
             everyLogMW[i] = cubicCoeffArray[0] + cubicCoeffArray[1]*everyRfValue[i] + cubicCoeffArray[2]*everyRfValue[i]*everyRfValue[i] + cubicCoeffArray[3]*everyRfValue[i]*everyRfValue[i]*everyRfValue[i];
     }
-    //print('everyMW');
+    print('everyMW');
+   
     everyMW = inverseLog10Array(everyLogMW);
-    print(everyMW[0]);
-    print(everyMW[100]);
-    print(everyMW[200]);
-    print(everyMW[350]);
-    print(everyMW[400]);
-    print(everyMW[1000]);
-    print(everyMW[1100]);
+    //Array.print(everyMW);
     binPxValues = newArray(binCount);
-    Array.print(binPxValues);
+    //Array.print(binPxValues);
     for (j = 0; j < bins.length; j ++) {
-        everyMWCopy = everyMW;
+        print("original MWs");
+        //Array.print(everyMW);
+        everyMWCopy = Array.copy(everyMW);
+        //everyMWCopy = everyMW;
+        print("before subtraction:");
+        //Array.print(everyMWCopy);
         for (i = 0; i < laneLength; i ++) {
             everyMWCopy[i] = abs(everyMWCopy[i] - bins[j]);
+            
         }
-        print(everyMWCopy[0]);
+        print("current bin:");
+        print(bins[j]);
+        print("after subtraction:");
+        Array.print(everyMWCopy);
 
         Array.getStatistics(everyMWCopy, min, max, mean, stdDev);
-        print(min);
+        print("min=" + min);
 
-        for (i = 0; i < laneLength; i ++) {
-            if (everyMWCopy[i] == min) {
-                binPxValues[j] = i;
+        for (h = 0; h < laneLength; h ++) {
+            if (abs(everyMWCopy[h] - min)<1e-6) {
+                binPxValues[j] = h;
                 //print(binPxValues[j]);
-                print(j);
+                //print(j);
             }
         }
     }
@@ -402,3 +407,5 @@ calcPxFromBins();
 function quantBins() {
 
 }
+
+
