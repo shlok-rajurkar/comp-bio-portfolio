@@ -335,15 +335,15 @@ function inverseLog10Array(array) {
     return inverseLogValues;
 }
 //Test cases for XG4513/14 where stds are 100, 80, 60, 40, 20
-imageWidth = 1500;
-originXVal = 100;
+imageWidth = 1506;
+originXVal = 0;
 cubicCoeffArray = newArray(2.0490, 0.0341, -0.8621, -0.1735);
 print("-------------------------------------------------------");
 function calcPxFromBins() {
     bins = newArray(
     375, 339, 321, 315, 309, 303, 297, 291, 285, 272, 265, 256, 247, 242, 233, 220
     );
-    bins = newArray(96, 111, 100, 96, 37, 28);
+    bins = newArray(100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5);
     laneLength = imageWidth-originXVal;
     binCount = bins.length; 
     everyPixel = newArray(laneLength);
@@ -396,6 +396,7 @@ function calcPxFromBins() {
         }
     }
     Array.print(binPxValues);
+    return binPxValues
 }
 
 
@@ -403,6 +404,18 @@ function calcPxFromBins() {
 function quantBins() {
     calcPxFromBins();
     getBaseline();
+    selectWindow("Plots of " + croppedGelWindow)
+    yvals = getProfile();
+    for (i = 0, i < bin)
+    
+
+}
+
+function sumSingleBin(yValArray, binLowerBound, binUpperBound) {
+    slicedArray = Array.slice(yValArray, binLowerBound, binUpperBound);
+    Array.print(slicedArray);
+    Array.getStatistics(slicedArray, min, max, mean, stdDev);
+    return slicedArray.length * mean
 }
 
 
@@ -421,8 +434,7 @@ function getBaseline() {
     //         Overlay.add;} 
     waitForUser("Select point that reflects baseline y-value of the LDL range, then press OK.");
     getSelectionCoordinates(baselineX, baselineY);
-    baselineCoordinates = newArray(baselineX, baselineY);
-    return baselineCoordinates;
+    return baselineY;
     }
 
 getBaseline();
