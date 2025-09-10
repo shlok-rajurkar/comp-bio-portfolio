@@ -449,10 +449,12 @@ function getBackgroundConc() {
     setTool("multi point");
     waitForUser("Select point that reflects baseline y-value of the LDL range, then press OK.");
     getSelectionCoordinates(baselineX, baselineY);
-    for (i = 0, i < baselineY.length, ) {
+    // for (i = 0, i < baselineY.length, ) {
 
-    }
+    // }
+    print("Baseline Y:")
+    Array.print(baselineY);
     return baselineY;
     }
 
-
+getBackgroundConc();
