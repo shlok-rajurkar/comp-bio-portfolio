@@ -52,6 +52,7 @@ var t = 0;
 var cubicCoeffArray;
 var croppedGelWindow;
 var originXVal;
+var laneLength;
 
 function calcRfVals(xVals, imgLength) {
     result = newArray(xVals.length);
@@ -321,9 +322,7 @@ function quantifyLane() {
     print("Calculated:");
     Array.print(displayValueArray);
 
-    quantBins() {
-        
-    }
+    quantBins()
     originXVal = 0;
 
 }
@@ -399,11 +398,32 @@ function calcPxFromBins() {
     Array.print(binPxValues);
 }
 
-calcPxFromBins();
 
 
 function quantBins() {
-
+    calcPxFromBins();
+    getBaseline();
 }
 
+
+function getBaseline() {
+    // laneLength = 1400;
+    // selectingBaseline = false;
+    // Can write this in later, should focus on the actual integration right now
+    // if(selectingBaseline) {
+    //     addHorizontalLineToCursor();
+    // }
+    // function addHorizontalLineToCursor() {
+    //     while(true) {
+    //         getCursorLoc(cursorX, cursorY, cursorZ, cursorModifiers);
+    //         Overlay.remove;
+    //         Overlay.drawLine(0, cursorY, laneLength, cursorY);
+    //         Overlay.add;} 
+    waitForUser("Select point that reflects baseline y-value of the LDL range, then press OK.");
+    getSelectionCoordinates(baselineX, baselineY);
+    baselineCoordinates = newArray(baselineX, baselineY);
+    return baselineCoordinates;
+    }
+
+getBaseline();
 
