@@ -4,6 +4,7 @@ main();
 
 
 function main() {
+    print('main');
     initialize();
     getStandards();
     cubicRegression(stdRfVals, stdWeights);
@@ -12,6 +13,7 @@ function main() {
 
 
 function getStandards() {
+    print('getStandards');
     stdWeights = newArray(0);
     stdRfVals = newArray(0);
     moreStandards = true;
@@ -34,6 +36,7 @@ function getStandards() {
 }
 
 function getLanes() {
+    print('getLanes');
     moreLanes = true;
     while (moreLanes) {
         quantifyLane();
@@ -55,6 +58,7 @@ var originXVal;
 var laneLength;
 
 function calcRfVals(xVals, imgLength) {
+    print('calcRfVals');
     result = newArray(xVals.length);
     for (i = 0; i < xVals.length; i ++) {
         result[i] = xVals[i]/imgLength;
@@ -63,6 +67,7 @@ function calcRfVals(xVals, imgLength) {
 }
 
 function log10Array(array) {
+    print('log10Array');
     logValues = newArray(array.length);
     for (i = 0; i < array.length; i++){
         logValues[i] = log(array[i])/log(10);
@@ -71,6 +76,7 @@ function log10Array(array) {
 }
 
 function inverseLog10Array(array) {
+    print('inverseLog10Array');
     inverseLogValues = newArray(array.length);
     for (i = 0; i < array.length; i++){
         inverseLogValues[i] = pow(10, array[i]);
@@ -79,6 +85,7 @@ function inverseLog10Array(array) {
 }
 
 function getRfValsFromLane() {
+    print('getRfValsFromLane');
     run("Plot Lanes");
 
     run("Remove Overlay");
@@ -111,6 +118,7 @@ function getRfValsFromLane() {
 }
 
 function OLSRegression(xValsForRegression, yValsForRegression) {
+    print('OLSRegression');
     xLength = xValsForRegression.length;
     yLength = yValsForRegression.length;
 
@@ -142,11 +150,13 @@ function OLSRegression(xValsForRegression, yValsForRegression) {
 }
 
 function calcStdCurveLinear(stdRfValues, log10StdWeights) {
+    print('calcStdCurveLinear');
     slopeAndInterceptArray = OLSRegression(stdRfValues, log10StdWeights);  
     return slopeAndInterceptArray;  
 }
 
 function calcStdCurveCubic(xVals, yVals) {
+    print('calcStdCurveCubic');
     n = xVals.length;
 
     sumX = newArray(7);
@@ -180,6 +190,7 @@ function calcStdCurveCubic(xVals, yVals) {
 }
 
 function gaussJordanFlat4x4(A, B) {
+    print('gaussJordanFlat4x4');
     n = 4;
 
     for (i = 0; i < n; i++) {
@@ -225,6 +236,7 @@ function gaussJordanFlat4x4(A, B) {
 
 
 function initialize() {
+    print('initialize');
 
 
     //stdWeights = newArray(0);
@@ -254,6 +266,7 @@ function initialize() {
 
 
 function setStandards() {
+    print('setStandards');
     selectWindow(croppedGelWindow);
     numberOfStandards = getNumber("enter number of standards", 5);
     stdWeightsTemp = newArray(numberOfStandards);
@@ -294,6 +307,7 @@ function setStandards() {
 }
 
 function cubicRegression(stdRfValues, stdWeights) {
+    print('cubicRegression');
     log10StdWeights = log10Array(stdWeights);
     cubicCoeffArray = calcStdCurveCubic(stdRfVals, log10StdWeights);
     //Array.print(cubicCoeffArray);
@@ -301,6 +315,7 @@ function cubicRegression(stdRfValues, stdWeights) {
 }
 
 function quantifyLane() {
+    print('quantifyLane');
     if (stdRfVals.length == 0 || stdWeights.length == 0){
         exit("Standards not set.");
     }
@@ -327,6 +342,7 @@ function quantifyLane() {
 }
 
 function inverseLog10Array(array) {
+    print('inverseLog10Array');
     inverseLogValues = newArray(array.length);
     for (i = 0; i < array.length; i++){
         inverseLogValues[i] = pow(10, array[i]);
@@ -339,6 +355,7 @@ function inverseLog10Array(array) {
 //cubicCoeffArray = newArray(2.0490, 0.0341, -0.8621, -0.1735);
 print("-------------------------------------------------------");
 function calcPxFromBins() {
+    print('calcPxFromBins');
     bins = newArray(
     375, 339, 321, 315, 309, 303, 297, 291, 285, 272, 265, 256, 247, 242, 233, 220
     );
@@ -402,6 +419,7 @@ function calcPxFromBins() {
 
 
 function quantBins() {
+    print('quantBins');
     binPxValues = calcPxFromBins();
     //binPxValues = newArray(380, 450, 512, 569, 623, 676, 727, 778, 828, 879, 932, 986, 1042, 1102, 1167, 1238, 1319, 1415, 1505, 1505);
     baselineY = getBackgroundConc();
@@ -426,6 +444,7 @@ function quantBins() {
 }
 
 function sumSingleBin(yValArray, binLowerBound, binUpperBound) {
+    print('sumSingleBin');
     slicedArray = Array.slice(yValArray, binLowerBound, binUpperBound);
     //Array.print(slicedArray);
     Array.getStatistics(slicedArray, min, max, mean, stdDev);
@@ -435,6 +454,7 @@ function sumSingleBin(yValArray, binLowerBound, binUpperBound) {
 
 
 function getBackgroundConc() {
+    print('getBackgroundConc');
     // laneLength = 1400;
     // selectingBaseline = false;
     // Can write this in later, should focus on the actual integration right now
