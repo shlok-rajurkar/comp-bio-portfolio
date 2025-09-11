@@ -350,7 +350,7 @@ function calcPxFromBins() {
     bins = newArray(
     375, 339, 321, 315, 309, 303, 297, 291, 285, 272, 265, 256, 247, 242, 233, 220
     );
-
+    bins = newArray(100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20);
     originIndex = originXValForBinning/0.005;
 
     laneLength = yValsCurrLane.length-originIndex;
@@ -406,8 +406,15 @@ function quantBins() {
     binSums = newArray(binPxValues.length-1);
     for (i = 0; i < binPxValues.length-1; i ++) {
         binSums[i] = sumSingleBin(yValsCurrLane, binPxValues[i], binPxValues[i+1]);
-        print(binPxValues[i] + '-' + binPxValues[i+1] + ": " + binSums[i]);
+        
     }
+    Array.getStatistics(binSums, min, max, mean, stdDev);
+    binSumsTotal = mean*binSums.length;
+    for (i = 0; i < binSums.length; i++) {
+        binSums[i] = (binSums[i]/binSumsTotal)*100;
+        print(binPxValues[i] + '-' + binPxValues[i+1] + ": " + binSums[i] + "%");
+    }
+    
     //Array.print(binSums);
 
 }
