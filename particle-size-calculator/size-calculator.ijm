@@ -56,6 +56,8 @@ var cubicCoeffArray;
 var croppedGelWindow;
 var originXVal;
 var laneLength;
+var yValsCurrLane;
+
 
 function calcRfVals(xVals, imgLength) {
     print('calcRfVals');
@@ -86,6 +88,9 @@ function inverseLog10Array(array) {
 
 function getRfValsFromLane() {
     print('getRfValsFromLane');
+
+    yValsCurrLane = getProfile();
+
     run("Plot Lanes");
 
     run("Remove Overlay");
@@ -353,7 +358,6 @@ function inverseLog10Array(array) {
 //imageWidth = 1506;
 //originXVal = 0;
 //cubicCoeffArray = newArray(2.0490, 0.0341, -0.8621, -0.1735);
-print("-------------------------------------------------------");
 function calcPxFromBins() {
     print('calcPxFromBins');
     bins = newArray(
@@ -431,13 +435,15 @@ function quantBins() {
     //Array.fill(yValTestZeroes, 0);
     //yVals = Array.concat(yValTestOnes, yValTestZeroes);
     //Array.print(yVals);
-    yVals = getProfile();
-    for (i = 0; i < yVals.length; i++) {
-        yVals[i] = yVals[i] - baselineY;
+    //
+    //yValsCurrLane = getProfile();
+    Array.print(yValsCurrLane);
+    for (i = 0; i < yValsCurrLane.length; i++) {
+        yValsCurrLane[i] = yValsCurrLane[i] - baselineY;
     }
     binSums = newArray(binPxValues.length-1);
     for (i = 0; i < binPxValues.length-1; i ++) {
-        binSums[i] = sumSingleBin(yVals, binPxValues[i], binPxValues[i+1]);
+        binSums[i] = sumSingleBin(yValsCurrLane, binPxValues[i], binPxValues[i+1]);
     }
     Array.print(binSums);
 
@@ -446,9 +452,9 @@ function quantBins() {
 function sumSingleBin(yValArray, binLowerBound, binUpperBound) {
     print('sumSingleBin');
     slicedArray = Array.slice(yValArray, binLowerBound, binUpperBound);
-    //Array.print(slicedArray);
+    Array.print(slicedArray);
     Array.getStatistics(slicedArray, min, max, mean, stdDev);
-    return slicedArray.length * mean
+    return slicedArray.length * mean;
 }
 
 
