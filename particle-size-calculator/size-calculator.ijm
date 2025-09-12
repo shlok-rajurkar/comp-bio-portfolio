@@ -51,17 +51,16 @@ var t = 0;
 var cubicCoeffArray;
 var croppedGelWindow;
 var originXVal;
-var laneLength;
+//var laneLength;
 var yValsCurrLane;
 var bins;
-var originXValForBinning;
 
 
-function calcRfVals(xVals, imgLength) {
+function calcRfVals(xVals, laneLength) {
     //print('calcRfVals');
     result = newArray(xVals.length);
     for (i = 0; i < xVals.length; i ++) {
-        result[i] = xVals[i]/imgLength;
+        result[i] = xVals[i]/laneLength;
     }
     return result;
 }
@@ -87,9 +86,11 @@ function inverseLog10Array(array) {
 function getRfValsFromLane() {
     //print('getRfValsFromLane');
 
-    yValsCurrLane = getProfile();
-
     run("Plot Profile");
+
+    Plot.getValues(xValsCurrLane, yValsCurrLane);
+    // Don't think subtracting index 0 is necessary here since X vals will always start at 0.
+    xValsCurrLaneIndex = divideArrayByStep(xValsCurrLane, xValsCurrLane[1]-xValsCurrLane[0]);
 
     run("Remove Overlay");
 
@@ -97,32 +98,23 @@ function getRfValsFromLane() {
 
     waitForUser("Mark origin of lane, then press OK.");
 
-
+    run("Clear Results");
 
     run("Measure");
 
-    originXValForBinning = getResult("X");
+    originXVal = divideByStep(getResult("X"));
 
-    getSelectionCoordinates(originXVal, originYVal);
+    laneLength = xValsCurrLane.length - originXVal;
 
-    waitForUser("Mark the peaks with the multipoint tool, then press OK. \nOnly mark them from left to right, in increasing weight/diameter.");
-    
+    run("Clear Results");
 
-    getSelectionCoordinates(xpoints, ypoints);
+    waitForUser("Mark peaks with the multipoint tool, then press OK. \nOnly mark them from left to right, in increasing weight/diameter.");
 
-    nPoints = xpoints.length;
+    run("Measure");
 
-    xVals = newArray(nPoints);
+    xVals = divideArrayByStep(getResult("X", nResults));
 
-    for (i = 0; i < nPoints; i++) {
-        xVals[i] = xpoints[i];
-    }
-
-    xVals = Array.slice(xVals, 1, xVals.length);
-
-    getDimensions(plotWidth, plotHeight, c, z, t);
-
-    RfVals = calcRfVals(xVals, plotWidth-originXVal[0]);
+    RfVals = calcRfVals(xVals, laneLength);
 
     return RfVals;    
 }
