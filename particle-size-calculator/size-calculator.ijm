@@ -449,7 +449,7 @@ function getBackgroundConc() {
     return baselineY
     }
 
-// Rounding functions
+// Rounding functions 
 
 function roundToStep(number, step) {
     return round(number/step)*step;
@@ -463,3 +463,14 @@ function roundArrayToStep(array, step) {
     return roundedArray;
 }
 
+function divideByStep(number, step) {
+    return round(number/step);
+}
+
+function divideArrayByStep(array, step) {
+    dividedArray = newArray(array.length);
+    for (i = 0; i < array.length; i ++) {
+        dividedArray[i] = divideByStep(array[i], step);
+    }
+    return dividedArray;
+}
