@@ -449,3 +449,9 @@ function getBackgroundConc() {
     return baselineY
     }
 
+
+function roundToStep(number, step) {
+    return round(number/step)*step;
+}
+
+roundToStep(.799, .005);
