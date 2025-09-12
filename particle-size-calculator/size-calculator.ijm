@@ -51,7 +51,8 @@ var t = 0;
 var cubicCoeffArray;
 var croppedGelWindow;
 var originXVal;
-//var laneLength;
+var laneLength;
+var xValsCurrLaneIndex;
 var yValsCurrLane;
 var bins;
 
@@ -102,17 +103,28 @@ function getRfValsFromLane() {
 
     run("Measure");
 
-    originXVal = divideByStep(getResult("X"));
+    originXVal = divideByStep(getResult("X"), xValsCurrLane[1]-xValsCurrLane[0]);
 
-    laneLength = xValsCurrLane.length - originXVal;
+    laneLength = xValsCurrLaneIndex.length - originXVal;
+
+    xValsCurrLaneIndex = Array.slice(xValsCurrLaneIndex, originXVal, xValsCurrLaneIndex.length);
+    yValsCurrLane = Array.slice(yValsCurrLane, originXVal, yValsCurrLane.length);
 
     run("Clear Results");
+
+    run("Remove Overlay");
 
     waitForUser("Mark peaks with the multipoint tool, then press OK. \nOnly mark them from left to right, in increasing weight/diameter.");
 
     run("Measure");
 
-    xVals = divideArrayByStep(getResult("X", nResults));
+    xValsAndOrigin = divideArrayByStep(getAllResults("X"), xValsCurrLane[1]-xValsCurrLane[0]);
+
+    Array.print(xValsAndOrigin);
+
+    xVals = Array.slice(xValsAndOrigin, 1);
+
+    Array.print(xVals);
 
     RfVals = calcRfVals(xVals, laneLength);
 
@@ -247,6 +259,7 @@ function initialize() {
     
     run("Set Measurements...", "invert redirect=None decimal=3");
     run("Gel Analyzer Options...", "vertical=1 horizontal=1 label");
+    run("Clear Results");
 
     xnum = getString("enter X number", "");
     
@@ -344,20 +357,12 @@ function calcPxFromBins() {
     375, 339, 321, 315, 309, 303, 297, 291, 285, 272, 265, 256, 247, 242, 233, 220
     );
     //bins = newArray(100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20);
-    originIndex = originXValForBinning/0.005;
-    print(originIndex);
-    laneLength = yValsCurrLane.length-originIndex;
+    //originIndex = originXValForBinning/0.005;
+    //print(originIndex);
     binCount = bins.length; 
-    everyPixel = newArray(laneLength);
-    for (i = 0; i < laneLength; i ++) {
-        everyPixel[i] = i;
-    }
-    everyRfValue = newArray(laneLength);
-    everyLogMW = newArray(laneLength);
-    for (i = 0; i < laneLength; i ++) {
-        everyRfValue[i] = everyPixel[i]/laneLength;
-    }
-
+    //everyXVal = newArray(laneLength);
+    everyRfValue = calcRfVals(xValsCurrLaneIndex, laneLength);
+    everyLogMW = newArray(xValsCurrLaneIndex.length);
     for (i = 0; i < laneLength; i ++) {
             everyLogMW[i] = cubicCoeffArray[0] + cubicCoeffArray[1]*everyRfValue[i] + cubicCoeffArray[2]*everyRfValue[i]*everyRfValue[i] + cubicCoeffArray[3]*everyRfValue[i]*everyRfValue[i]*everyRfValue[i];
     }
@@ -395,7 +400,6 @@ function quantBins() {
     binSums = newArray(binPxValues.length-1);
     for (i = 0; i < binPxValues.length-1; i ++) {
         binSums[i] = sumSingleBin(yValsCurrLane, binPxValues[i], binPxValues[i+1]);
-        
     }
     Array.getStatistics(binSums, min, max, mean, stdDev);
     binSumsTotal = mean*binSums.length;
@@ -434,11 +438,12 @@ function getBackgroundConc() {
     //         Overlay.add;} 
     setTool("multi point");
     waitForUser("Select point that reflects baseline y-value of the LDL range, then press OK.");
+    run("Clear Results");
     run("Measure");
     baselineY = getResult("Y");
 
     print(baselineY);
-    return baselineY
+    return baselineY;
     }
 
 // Rounding functions 
@@ -466,3 +471,14 @@ function divideArrayByStep(array, step) {
     }
     return dividedArray;
 }
+
+// This might be built in somewhere. Can replace later.
+function getAllResults(column) {
+    array = newArray(nResults);
+    results = newArray(array.length);
+    for (i = 0; i < results.length; i ++) {
+        results[i] = getResult(column, i);
+    }
+    return results;
+}
+
