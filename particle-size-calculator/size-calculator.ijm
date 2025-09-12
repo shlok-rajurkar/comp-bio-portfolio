@@ -253,7 +253,7 @@ function initialize() {
     xnum = ""
 
     
-    run("Set Measurements...", "invert redirect=None decimal=1");
+    run("Set Measurements...", "invert redirect=None decimal=3");
     run("Gel Analyzer Options...", "vertical=1 horizontal=1 label");
 
     xnum = getString("enter X number", "");
@@ -422,7 +422,7 @@ function sumSingleBin(yValArray, binLowerBound, binUpperBound) {
     //Array.print(slicedArray);
     Array.getStatistics(slicedArray, min, max, mean, stdDev);
     //print(min, max, mean, stdDev);
-    print(slicedArray.length);
+    Array.print(slicedArray);
     return slicedArray.length * mean;
 }
 
