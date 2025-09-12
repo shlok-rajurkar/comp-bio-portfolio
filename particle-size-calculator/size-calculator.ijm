@@ -108,6 +108,11 @@ function getRfValsFromLane() {
     laneLength = xValsCurrLaneIndex.length - originXVal;
 
     xValsCurrLaneIndex = Array.slice(xValsCurrLaneIndex, originXVal, xValsCurrLaneIndex.length);
+
+    for (i = 0; i < xValsCurrLaneIndex.length; i ++) {
+        xValsCurrLaneIndex[i] = xValsCurrLaneIndex[i] - originXVal;
+    }
+
     yValsCurrLane = Array.slice(yValsCurrLane, originXVal, yValsCurrLane.length);
 
     run("Clear Results");
