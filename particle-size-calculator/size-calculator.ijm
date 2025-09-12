@@ -346,20 +346,20 @@ function inverseLog10Array(array) {
 
 
 function calcPxFromBins() {
+    // Need to fix this, probably where the bin problem is. Bin widths seem to match up with desired widths, but maybe the lateral placement is off...
     //print('calcPxFromBins');
     bins = newArray(
     375, 339, 321, 315, 309, 303, 297, 291, 285, 272, 265, 256, 247, 242, 233, 220
     );
     //bins = newArray(100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20);
     originIndex = originXValForBinning/0.005;
-
+    print(originIndex);
     laneLength = yValsCurrLane.length-originIndex;
     binCount = bins.length; 
     everyPixel = newArray(laneLength);
     for (i = 0; i < laneLength; i ++) {
         everyPixel[i] = i;
     }
-
     everyRfValue = newArray(laneLength);
     everyLogMW = newArray(laneLength);
     for (i = 0; i < laneLength; i ++) {
@@ -369,8 +369,6 @@ function calcPxFromBins() {
     for (i = 0; i < laneLength; i ++) {
             everyLogMW[i] = cubicCoeffArray[0] + cubicCoeffArray[1]*everyRfValue[i] + cubicCoeffArray[2]*everyRfValue[i]*everyRfValue[i] + cubicCoeffArray[3]*everyRfValue[i]*everyRfValue[i]*everyRfValue[i];
     }
-
-   
     everyMW = inverseLog10Array(everyLogMW);
     binPxValues = newArray(binCount);
     for (j = 0; j < bins.length; j ++) {
@@ -378,7 +376,6 @@ function calcPxFromBins() {
         for (i = 0; i < laneLength; i ++) {
             everyMWCopy[i] = abs(everyMWCopy[i] - bins[j]);   
         }
-
         Array.getStatistics(everyMWCopy, min, max, mean, stdDev);
 
         for (h = 0; h < laneLength; h ++) {
@@ -425,6 +422,7 @@ function sumSingleBin(yValArray, binLowerBound, binUpperBound) {
     //Array.print(slicedArray);
     Array.getStatistics(slicedArray, min, max, mean, stdDev);
     //print(min, max, mean, stdDev);
+    print(slicedArray.length);
     return slicedArray.length * mean;
 }
 
