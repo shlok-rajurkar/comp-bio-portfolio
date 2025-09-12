@@ -381,6 +381,7 @@ function calcPxFromBins() {
         Array.getStatistics(everyMWCopy, min, max, mean, stdDev);
 
         for (h = 0; h < laneLength; h ++) {
+            ranks = Array.rankPositions()
             if (abs(everyMWCopy[h] - min)<1e-6) {
                 binPxValues[j] = h;
             }
@@ -397,7 +398,7 @@ function quantBins() {
     binPxValues = calcPxFromBins();
     baselineY = getBackgroundConc();
     Array.getStatistics(yValsCurrLane, min, max, mean, stdDev);
-    print(min, max, mean, stdDev);
+    //print(min, max, mean, stdDev);
     //Array.print(yValsCurrLane);
     for (i = 0; i < yValsCurrLane.length; i++) {
     yValsCurrLane[i] = yValsCurrLane[i] - baselineY;
@@ -423,7 +424,7 @@ function sumSingleBin(yValArray, binLowerBound, binUpperBound) {
     //Array.print(slicedArray);
     Array.getStatistics(slicedArray, min, max, mean, stdDev);
     //print(min, max, mean, stdDev);
-    Array.print(slicedArray);
+    //Array.print(slicedArray);
     return slicedArray.length * mean;
 }
 
@@ -447,7 +448,7 @@ function getBackgroundConc() {
     run("Measure");
     baselineY = getResult("Y");
 
-    print(baselineY);
+    //print(baselineY);
     return baselineY;
     }
 
