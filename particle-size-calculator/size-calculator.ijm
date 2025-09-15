@@ -20,7 +20,6 @@ var xValsCurrLaneIndex;
 var yValsCurrLane;
 var bins;
 
-
 function main() {
     //print('main');
     initialize();
@@ -28,8 +27,7 @@ function main() {
     cubicRegression(stdRfVals, stdWeights);
     Array.print(cubicCoeffArray);
     getLanes();
-    }
-
+}
 
 function initialize() {
     //print('initialize');
@@ -77,7 +75,6 @@ function getStandards() {
     }
 }
 
-
 function setStandards() {
     //print('setStandards');
     selectWindow(croppedGelWindow);
@@ -102,10 +99,7 @@ function setStandards() {
     stdRfValsTemp = getRfValsFromLane();
     stdWeightsTempAndStdRfValsTemp = Array.concat(stdWeightsTemp, stdRfValsTemp);
     return stdWeightsTempAndStdRfValsTemp;
-
-    
 }
-
 
 function getRfValsFromLane() {
     //print('getRfValsFromLane');
@@ -159,7 +153,6 @@ function getRfValsFromLane() {
     return RfVals;    
 }
 
-
 function getLanes() {
     //print('getLanes');
     moreLanes = true;
@@ -168,7 +161,6 @@ function getLanes() {
         moreLanes = getBoolean("Analyze more lanes?");
     }
 }
-
 
 function quantifyLane() {
     //print('quantifyLane');
@@ -197,6 +189,30 @@ function quantifyLane() {
 
 }
 
+function quantBins() {
+    //print('quantBins');
+    binPxValues = calcPxFromBins();
+    baselineY = getBackgroundConc();
+    Array.getStatistics(yValsCurrLane, min, max, mean, stdDev);
+    //print(min, max, mean, stdDev);
+    //Array.print(yValsCurrLane);
+    for (i = 0; i < yValsCurrLane.length; i++) {
+    yValsCurrLane[i] = yValsCurrLane[i] - baselineY;
+    }
+    binSums = newArray(binPxValues.length-1);
+    for (i = 0; i < binPxValues.length-1; i ++) {
+        binSums[i] = sumSingleBin(yValsCurrLane, binPxValues[i], binPxValues[i+1]);
+    }
+    Array.getStatistics(binSums, min, max, mean, stdDev);
+    binSumsTotal = mean*binSums.length;
+    for (i = 0; i < binSums.length; i++) {
+        binSums[i] = (binSums[i]/binSumsTotal)*100;
+        print(bins[i] + '-' + bins[i+1] + ": " + binSums[i] + "%");
+    }
+    
+    //Array.print(binSums);
+
+}
 
 function calcPxFromBins() {
     //print('calcPxFromBins');
@@ -228,39 +244,6 @@ function calcPxFromBins() {
     return binPxValues;
 }
 
-function cubicRegression(stdRfValues, stdWeights) {
-    //print('cubicRegression');
-    log10StdWeights = log10Array(stdWeights);
-    cubicCoeffArray = calcStdCurveCubic(stdRfVals, log10StdWeights);
-    //Array.print(cubicCoeffArray);
-    return cubicCoeffArray;
-}
-
-function quantBins() {
-    //print('quantBins');
-    binPxValues = calcPxFromBins();
-    baselineY = getBackgroundConc();
-    Array.getStatistics(yValsCurrLane, min, max, mean, stdDev);
-    //print(min, max, mean, stdDev);
-    //Array.print(yValsCurrLane);
-    for (i = 0; i < yValsCurrLane.length; i++) {
-    yValsCurrLane[i] = yValsCurrLane[i] - baselineY;
-    }
-    binSums = newArray(binPxValues.length-1);
-    for (i = 0; i < binPxValues.length-1; i ++) {
-        binSums[i] = sumSingleBin(yValsCurrLane, binPxValues[i], binPxValues[i+1]);
-    }
-    Array.getStatistics(binSums, min, max, mean, stdDev);
-    binSumsTotal = mean*binSums.length;
-    for (i = 0; i < binSums.length; i++) {
-        binSums[i] = (binSums[i]/binSumsTotal)*100;
-        print(bins[i] + '-' + bins[i+1] + ": " + binSums[i] + "%");
-    }
-    
-    //Array.print(binSums);
-
-}
-
 function sumSingleBin(yValArray, binLowerBound, binUpperBound) {
     //print('sumSingleBin');
     slicedArray = Array.slice(yValArray, binLowerBound, binUpperBound);
@@ -271,20 +254,17 @@ function sumSingleBin(yValArray, binLowerBound, binUpperBound) {
     return slicedArray.length * mean;
 }
 
-
+function cubicRegression(stdRfValues, stdWeights) {
+    //print('cubicRegression');
+    log10StdWeights = log10Array(stdWeights);
+    cubicCoeffArray = calcStdCurveCubic(stdRfVals, log10StdWeights);
+    //Array.print(cubicCoeffArray);
+    return cubicCoeffArray;
+}
 
 function getBackgroundConc() {
     //print('getBackgroundConc');
-    // Can write this in later, should focus on the actual integration right now
-    // if(selectingBaseline) {
-    //     addHorizontalLineToCursor();
-    // }
-    // function addHorizontalLineToCursor() {
-    //     while(true) {
-    //         getCursorLoc(cursorX, cursorY, cursorZ, cursorModifiers);
-    //         Overlay.remove;
-    //         Overlay.drawLine(0, cursorY, laneLength, cursorY);
-    //         Overlay.add;} 
+
     setTool("multi point");
     waitForUser("Select point that reflects baseline y-value of the LDL range, then press OK.");
     run("Clear Results");
@@ -293,12 +273,11 @@ function getBackgroundConc() {
 
     //print(baselineY);
     return baselineY;
-    }
+}
 
 
 
 // -- Utils -- //
-
 
 // Rounds number to given decimal step
 function roundToStep(number, step) {
@@ -480,3 +459,4 @@ function gaussJordanFlat4x4(A, B) {
 
     return B;
 }
+
