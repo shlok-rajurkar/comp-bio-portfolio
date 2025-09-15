@@ -460,3 +460,23 @@ function gaussJordanFlat4x4(A, B) {
     return B;
 }
 
+// Connects cursor to horizontal line until point is marked
+function addHorizontalLineToCursor() {
+    return None
+}
+
+    // Can write this in later, should focus on the actual integration right now
+    // if(selectingBaseline) {
+    //     addHorizontalLineToCursor();
+    // }
+    // function addHorizontalLineToCursor() {
+    //     while(true) {
+    //         getCursorLoc(cursorX, cursorY, cursorZ, cursorModifiers);
+    //         Overlay.remove;
+    //         Overlay.drawLine(0, cursorY, laneLength, cursorY);
+    //         Overlay.add;} 
+
+// Connects cursor to vertical line until point is marked
+function addVerticalLineToCursor() {
+    return None    
+}
