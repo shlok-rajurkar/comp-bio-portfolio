@@ -25,6 +25,7 @@ function main() {
     //print('main');
     initialize();
     getStandards();
+    Array.print(cubicCoeffArray);
     cubicRegression(stdRfVals, stdWeights);
     getLanes();
     }
@@ -170,13 +171,7 @@ function setStandards() {
     
 }
 
-function cubicRegression(stdRfValues, stdWeights) {
-    //print('cubicRegression');
-    log10StdWeights = log10Array(stdWeights);
-    cubicCoeffArray = calcStdCurveCubic(stdRfVals, log10StdWeights);
-    //Array.print(cubicCoeffArray);
-    return cubicCoeffArray;
-}
+
 
 function quantifyLane() {
     //print('quantifyLane');
@@ -207,16 +202,11 @@ function quantifyLane() {
 
 
 function calcPxFromBins() {
-    // Need to fix this, probably where the bin problem is. Bin widths seem to match up with desired widths, but maybe the lateral placement is off...
     //print('calcPxFromBins');
     bins = newArray(
     375, 339, 321, 315, 309, 303, 297, 291, 285, 272, 265, 256, 247, 242, 233, 220
     );
-    //bins = newArray(100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20);
-    //originIndex = originXValForBinning/0.005;
-    //print(originIndex);
     binCount = bins.length; 
-    //everyXVal = newArray(laneLength);
     everyRfValue = calcRfVals(xValsCurrLaneIndex, laneLength);
     everyLogMW = newArray(xValsCurrLaneIndex.length);
     for (i = 0; i < laneLength; i ++) {
@@ -242,7 +232,13 @@ function calcPxFromBins() {
     return binPxValues;
 }
 
-
+function cubicRegression(stdRfValues, stdWeights) {
+    //print('cubicRegression');
+    log10StdWeights = log10Array(stdWeights);
+    cubicCoeffArray = calcStdCurveCubic(stdRfVals, log10StdWeights);
+    //Array.print(cubicCoeffArray);
+    return cubicCoeffArray;
+}
 
 function quantBins() {
     //print('quantBins');
@@ -302,6 +298,8 @@ function getBackgroundConc() {
     //print(baselineY);
     return baselineY;
     }
+
+
 
 // -- Utils -- //
 
