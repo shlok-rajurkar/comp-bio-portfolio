@@ -2,6 +2,25 @@
 
 main();
 
+//Global vars, will transition away from global vars once working properly.
+
+var stdWeights;
+var stdRfVals;
+var slopeAndInterceptArray;
+var imageWidth;
+var imageHeight;
+var xnum;
+var c = 0;
+var z = 0;
+var t = 0;
+var cubicCoeffArray;
+var croppedGelWindow;
+var originXVal;
+var laneLength;
+var xValsCurrLaneIndex;
+var yValsCurrLane;
+var bins;
+
 
 function main() {
     //print('main');
@@ -39,22 +58,6 @@ function getLanes() {
         moreLanes = getBoolean("Analyze more lanes?");
     }
 }
-var stdWeights;
-var stdRfVals;
-var slopeAndInterceptArray;
-var imageWidth;
-var imageHeight;
-var xnum;
-var c = 0;
-var z = 0;
-var t = 0;
-var cubicCoeffArray;
-var croppedGelWindow;
-var originXVal;
-var laneLength;
-var xValsCurrLaneIndex;
-var yValsCurrLane;
-var bins;
 
 
 function calcRfVals(xVals, laneLength) {
