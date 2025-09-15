@@ -6,7 +6,6 @@ main();
 
 var stdWeights;
 var stdRfVals;
-var slopeAndInterceptArray;
 var imageWidth;
 var imageHeight;
 var xnum;
@@ -60,32 +59,6 @@ function getLanes() {
 }
 
 
-function calcRfVals(xVals, laneLength) {
-    //print('calcRfVals');
-    result = newArray(xVals.length);
-    for (i = 0; i < xVals.length; i ++) {
-        result[i] = xVals[i]/laneLength;
-    }
-    return result;
-}
-
-function log10Array(array) {
-    //print('log10Array');
-    logValues = newArray(array.length);
-    for (i = 0; i < array.length; i++){
-        logValues[i] = log(array[i])/log(10);
-    }
-    return logValues;
-}
-
-function inverseLog10Array(array) {
-    //print('inverseLog10Array');
-    inverseLogValues = newArray(array.length);
-    for (i = 0; i < array.length; i++){
-        inverseLogValues[i] = pow(10, array[i]);
-    }
-    return inverseLogValues;
-}
 
 function getRfValsFromLane() {
     //print('getRfValsFromLane');
@@ -137,122 +110,6 @@ function getRfValsFromLane() {
     RfVals = calcRfVals(xVals, laneLength);
 
     return RfVals;    
-}
-
-function OLSRegression(xValsForRegression, yValsForRegression) {
-    //print('OLSRegression');
-    xLength = xValsForRegression.length;
-    yLength = yValsForRegression.length;
-
-    xTotal = 0;
-    yTotal = 0;
-
-    for(i = 0; i < xLength; i++) {
-        xTotal += xValsForRegression[i];
-        yTotal += yValsForRegression[i];
-    }
-    xMean = xTotal/xLength;
-    yMean = yTotal/yLength;
-
-    numerator = 0;
-    denominator = 0;
-
-    for(i = 0; i < xLength; i++) {
-        dx = xValsForRegression[i] - xMean;
-        dy = yValsForRegression[i] - yMean;
-        numerator += dx * dy;
-        denominator += dx * dx;
-    }
-
-    regressionSlope = numerator/denominator;
-
-    regressionIntercept = yMean - regressionSlope * xMean;
-
-    return newArray(regressionSlope, regressionIntercept);
-}
-
-function calcStdCurveLinear(stdRfValues, log10StdWeights) {
-    //print('calcStdCurveLinear');
-    slopeAndInterceptArray = OLSRegression(stdRfValues, log10StdWeights);  
-    return slopeAndInterceptArray;  
-}
-
-function calcStdCurveCubic(xVals, yVals) {
-    //print('calcStdCurveCubic');
-    n = xVals.length;
-
-    sumX = newArray(7);
-    for (i = 0; i <= 6; i++) sumX[i] = 0;
-    sumXY = newArray(4);
-    for (i = 0; i <= 3; i++) sumXY[i] = 0;
-
-    for (i = 0; i < n; i++) {
-        x = xVals[i];
-        y = yVals[i];
-        powX = newArray(7);
-        powX[0] = 1;
-        for (j = 1; j <= 6; j++) powX[j] = powX[j - 1] * x;
-
-        for (j = 0; j <= 6; j++) sumX[j] += powX[j];
-        for (j = 0; j <= 3; j++) sumXY[j] += powX[j] * y;
-    }
-
-    // Flattened 4x4 matrix A
-    A = newArray(16);
-    for (i = 0; i <= 3; i++) {
-        for (j = 0; j <= 3; j++) {
-            A[i * 4 + j] = sumX[i + j];
-        }
-    }
-
-    B = sumXY;
-
-    coeffs = gaussJordanFlat4x4(A, B);
-    return coeffs; // [a, b, c, d]
-}
-
-function gaussJordanFlat4x4(A, B) {
-    //print('gaussJordanFlat4x4');
-    n = 4;
-
-    for (i = 0; i < n; i++) {
-        // Find non-zero pivot
-        if (A[i * 4 + i] == 0) {
-            for (j = i + 1; j < n; j++) {
-                if (A[j * 4 + i] != 0) {
-                    // Swap rows in A
-                    for (k = 0; k < n; k++) {
-                        temp = A[i * 4 + k];
-                        A[i * 4 + k] = A[j * 4 + k];
-                        A[j * 4 + k] = temp;
-                    }
-                    // Swap B
-                    tmpB = B[i];
-                    B[i] = B[j];
-                    B[j] = tmpB;
-                    break;
-                }
-            }
-        }
-
-        // Normalize row
-        factor = A[i * 4 + i];
-        for (j = 0; j < n; j++) A[i * 4 + j] /= factor;
-        B[i] /= factor;
-
-        // Eliminate other rows
-        for (j = 0; j < n; j++) {
-            if (j != i) {
-                factor = A[j * 4 + i];
-                for (k = 0; k < n; k++) {
-                    A[j * 4 + k] -= factor * A[i * 4 + k];
-                }
-                B[j] -= factor * B[i];
-            }
-        }
-    }
-
-    return B;
 }
 
 
@@ -346,15 +203,6 @@ function quantifyLane() {
 
     quantBins();
 
-}
-
-function inverseLog10Array(array) {
-    //print('inverseLog10Array');
-    inverseLogValues = newArray(array.length);
-    for (i = 0; i < array.length; i++){
-        inverseLogValues[i] = pow(10, array[i]);
-    }
-    return inverseLogValues;
 }
 
 
@@ -455,12 +303,15 @@ function getBackgroundConc() {
     return baselineY;
     }
 
-// Rounding functions 
+// -- Utils -- //
 
+
+// Rounds number to given decimal step
 function roundToStep(number, step) {
     return round(number/step)*step;
 }
 
+// roundToStep for array
 function roundArrayToStep(array, step) {
     roundedArray = newArray(array.length);
     for (i = 0; i < array.length; i ++) {
@@ -469,10 +320,12 @@ function roundArrayToStep(array, step) {
     return roundedArray;
 }
 
+// Returns whole multiples of step in number
 function divideByStep(number, step) {
     return round(number/step);
 }
 
+// divideByStep for array
 function divideArrayByStep(array, step) {
     dividedArray = newArray(array.length);
     for (i = 0; i < array.length; i ++) {
@@ -481,7 +334,7 @@ function divideArrayByStep(array, step) {
     return dividedArray;
 }
 
-// This might be built in somewhere. Can replace later.
+// Retrieves all results currently in Results window
 function getAllResults(column) {
     array = newArray(nResults);
     results = newArray(array.length);
@@ -491,3 +344,145 @@ function getAllResults(column) {
     return results;
 }
 
+// Calculates Rf vaules given an array of x values and total lane length
+function calcRfVals(xVals, laneLength) {
+    //print('calcRfVals');
+    result = newArray(xVals.length);
+    for (i = 0; i < xVals.length; i ++) {
+        result[i] = xVals[i]/laneLength;
+    }
+    return result;
+}
+
+// Calculates log base 10 for every value of an array
+function log10Array(array) {
+    //print('log10Array');
+    logValues = newArray(array.length);
+    for (i = 0; i < array.length; i++){
+        logValues[i] = log(array[i])/log(10);
+    }
+    return logValues;
+}
+
+// Calculates inverse log 10 for every value of an array
+function inverseLog10Array(array) {
+    //print('inverseLog10Array');
+    inverseLogValues = newArray(array.length);
+    for (i = 0; i < array.length; i++){
+        inverseLogValues[i] = pow(10, array[i]);
+    }
+    return inverseLogValues;
+}
+
+// Performs OLS regression for arrays of x values and y values
+function OLSRegression(xValsForRegression, yValsForRegression) {
+    //print('OLSRegression');
+    xLength = xValsForRegression.length;
+    yLength = yValsForRegression.length;
+
+    xTotal = 0;
+    yTotal = 0;
+
+    for(i = 0; i < xLength; i++) {
+        xTotal += xValsForRegression[i];
+        yTotal += yValsForRegression[i];
+    }
+    xMean = xTotal/xLength;
+    yMean = yTotal/yLength;
+
+    numerator = 0;
+    denominator = 0;
+
+    for(i = 0; i < xLength; i++) {
+        dx = xValsForRegression[i] - xMean;
+        dy = yValsForRegression[i] - yMean;
+        numerator += dx * dy;
+        denominator += dx * dx;
+    }
+
+    regressionSlope = numerator/denominator;
+
+    regressionIntercept = yMean - regressionSlope * xMean;
+
+    return newArray(regressionSlope, regressionIntercept);
+}
+
+// Calculates cubic regression coefficients given x values and y values
+function calcStdCurveCubic(xVals, yVals) {
+    //print('calcStdCurveCubic');
+    n = xVals.length;
+
+    sumX = newArray(7);
+    for (i = 0; i <= 6; i++) sumX[i] = 0;
+    sumXY = newArray(4);
+    for (i = 0; i <= 3; i++) sumXY[i] = 0;
+
+    for (i = 0; i < n; i++) {
+        x = xVals[i];
+        y = yVals[i];
+        powX = newArray(7);
+        powX[0] = 1;
+        for (j = 1; j <= 6; j++) powX[j] = powX[j - 1] * x;
+
+        for (j = 0; j <= 6; j++) sumX[j] += powX[j];
+        for (j = 0; j <= 3; j++) sumXY[j] += powX[j] * y;
+    }
+
+    // Flattened 4x4 matrix A
+    A = newArray(16);
+    for (i = 0; i <= 3; i++) {
+        for (j = 0; j <= 3; j++) {
+            A[i * 4 + j] = sumX[i + j];
+        }
+    }
+
+    B = sumXY;
+
+    coeffs = gaussJordanFlat4x4(A, B);
+    return coeffs; // [a, b, c, d]
+}
+
+// Gauss Jordan reduction of 4x4 matrix
+function gaussJordanFlat4x4(A, B) {
+    //print('gaussJordanFlat4x4');
+    n = 4;
+
+    for (i = 0; i < n; i++) {
+        // Find non-zero pivot
+        if (A[i * 4 + i] == 0) {
+            for (j = i + 1; j < n; j++) {
+                if (A[j * 4 + i] != 0) {
+                    // Swap rows in A
+                    for (k = 0; k < n; k++) {
+                        temp = A[i * 4 + k];
+                        A[i * 4 + k] = A[j * 4 + k];
+                        A[j * 4 + k] = temp;
+                    }
+                    // Swap B
+                    tmpB = B[i];
+                    B[i] = B[j];
+                    B[j] = tmpB;
+                    break;
+                }
+            }
+        }
+
+        // Normalize row
+        factor = A[i * 4 + i];
+        for (j = 0; j < n; j++) A[i * 4 + j] /= factor;
+        B[i] /= factor;
+
+        // Eliminate other rows
+        for (j = 0; j < n; j++) {
+            if (j != i) {
+                factor = A[j * 4 + i];
+                for (k = 0; k < n; k++) {
+                    A[j * 4 + k] -= factor * A[i * 4 + k];
+                }
+                B[j] -= factor * B[i];
+            }
+        }
+    }
+
+    return B;
+}
