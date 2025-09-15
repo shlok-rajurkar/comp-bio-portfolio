@@ -8,4 +8,4 @@ Also by default calculates amount of protein in different LDL bins (determined b
 
 
 Instructions for use:
-WIP
+1. Open 
