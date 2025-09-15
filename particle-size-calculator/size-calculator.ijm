@@ -25,11 +25,38 @@ function main() {
     //print('main');
     initialize();
     getStandards();
-    Array.print(cubicCoeffArray);
     cubicRegression(stdRfVals, stdWeights);
+    Array.print(cubicCoeffArray);
     getLanes();
     }
 
+
+function initialize() {
+    //print('initialize');
+
+    imageWidth = 0
+    imageHeight = 0
+    xnum = ""
+
+    
+    run("Set Measurements...", "invert redirect=None decimal=3");
+    run("Gel Analyzer Options...", "vertical=1 horizontal=1 label");
+    run("Clear Results");
+
+    xnum = getString("enter X number", "");
+    
+    setTool("Rectangle");
+
+    getDimensions(imageWidth, imageHeight, c, z, t);
+    makeRectangle(0.3*imageWidth, 0.18*imageHeight, 0.36*imageWidth, 0.53*imageHeight);
+    waitForUser("Adjust rectangle to bound lanes and leave minimal space between top of image and top of gel. \nPressing OK will crop gel and rotate 90 degrees left.");
+
+    run("Crop");
+    wait(100);
+    run("Rotate 90 Degrees Left");
+    croppedGelWindow = File.name;
+    print(xnum + " Analysis:");
+}
 
 function getStandards() {
     //print('getStandards');
@@ -50,15 +77,34 @@ function getStandards() {
     }
 }
 
-function getLanes() {
-    //print('getLanes');
-    moreLanes = true;
-    while (moreLanes) {
-        quantifyLane();
-        moreLanes = getBoolean("Analyze more lanes?");
-    }
-}
 
+function setStandards() {
+    //print('setStandards');
+    selectWindow(croppedGelWindow);
+    numberOfStandards = getNumber("enter number of standards", 5);
+    stdWeightsTemp = newArray(numberOfStandards);
+    stdRfValsTemp = newArray(numberOfStandards);
+    for(i = 0; i < numberOfStandards; i++){
+        stdIndexDisplay = i + 1;
+        stdWeightsTemp[i] = getNumber("enter weight of standard " + stdIndexDisplay, 0);
+    }
+    print("Std weights:");
+
+    setTool("Rectangle");
+
+    getDimensions(standardLaneWidth, standardLaneHeight, c, z, t);
+
+    makeRectangle(0, (standardLaneHeight/2)-10 , standardLaneWidth, 20);
+    waitForUser("Adjust rectangle to span lane with standards. \nIt can be quite thin as long as it contains some part of the lane.");
+    
+    run("Select First Lane");
+
+    stdRfValsTemp = getRfValsFromLane();
+    stdWeightsTempAndStdRfValsTemp = Array.concat(stdWeightsTemp, stdRfValsTemp);
+    return stdWeightsTempAndStdRfValsTemp;
+
+    
+}
 
 
 function getRfValsFromLane() {
@@ -114,63 +160,14 @@ function getRfValsFromLane() {
 }
 
 
-
-function initialize() {
-    //print('initialize');
-
-    imageWidth = 0
-    imageHeight = 0
-    xnum = ""
-
-    
-    run("Set Measurements...", "invert redirect=None decimal=3");
-    run("Gel Analyzer Options...", "vertical=1 horizontal=1 label");
-    run("Clear Results");
-
-    xnum = getString("enter X number", "");
-    
-    setTool("Rectangle");
-
-    getDimensions(imageWidth, imageHeight, c, z, t);
-    makeRectangle(0.3*imageWidth, 0.18*imageHeight, 0.36*imageWidth, 0.53*imageHeight);
-    waitForUser("Adjust rectangle to bound lanes and leave minimal space between top of image and top of gel. \nPressing OK will crop gel and rotate 90 degrees left.");
-
-    run("Crop");
-    wait(100);
-    run("Rotate 90 Degrees Left");
-    croppedGelWindow = File.name;
-    print(xnum + " Analysis:");
-}
-
-
-function setStandards() {
-    //print('setStandards');
-    selectWindow(croppedGelWindow);
-    numberOfStandards = getNumber("enter number of standards", 5);
-    stdWeightsTemp = newArray(numberOfStandards);
-    stdRfValsTemp = newArray(numberOfStandards);
-    for(i = 0; i < numberOfStandards; i++){
-        stdIndexDisplay = i + 1;
-        stdWeightsTemp[i] = getNumber("enter weight of standard " + stdIndexDisplay, 0);
+function getLanes() {
+    //print('getLanes');
+    moreLanes = true;
+    while (moreLanes) {
+        quantifyLane();
+        moreLanes = getBoolean("Analyze more lanes?");
     }
-    print("Std weights:");
-
-    setTool("Rectangle");
-
-    getDimensions(standardLaneWidth, standardLaneHeight, c, z, t);
-
-    makeRectangle(0, (standardLaneHeight/2)-10 , standardLaneWidth, 20);
-    waitForUser("Adjust rectangle to span lane with standards. \nIt can be quite thin as long as it contains some part of the lane.");
-    
-    run("Select First Lane");
-
-    stdRfValsTemp = getRfValsFromLane();
-    stdWeightsTempAndStdRfValsTemp = Array.concat(stdWeightsTemp, stdRfValsTemp);
-    return stdWeightsTempAndStdRfValsTemp;
-
-    
 }
-
 
 
 function quantifyLane() {
@@ -222,7 +219,6 @@ function calcPxFromBins() {
         Array.getStatistics(everyMWCopy, min, max, mean, stdDev);
 
         for (h = 0; h < laneLength; h ++) {
-            ranks = Array.rankPositions()
             if (abs(everyMWCopy[h] - min)<1e-6) {
                 binPxValues[j] = h;
             }
