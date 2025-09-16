@@ -8,8 +8,7 @@ Also by default calculates amount of protein in different LDL bins (determined b
 
 
 Instructions for use:
-IMPORTANT: When the macro prompts you to take certain actions, take those actions AND THEN press OK.
-IMPORTANT: If you receive an error, take note of the error output and restart from step 2. Read all instructions carefully.
+IMPORTANT: Read all instructions carefully. If you receive an error, take note of the error output and restart from step 2.
 1. Open ImageJ.
 2. Open gel file via File>Open and navigating to gel image.
 3. Start macro via >Path> .Once path has been selected, macro can be run with Plugins>Tools>ImageJ GGE Macro
