@@ -469,7 +469,6 @@ function addHorizontalLineToCursor() {
         Overlay.show();
         wait(5);
         Overlay.remove();
-        waitForUser('test');
 }
 }
 
