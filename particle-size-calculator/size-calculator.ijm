@@ -469,8 +469,18 @@ function addHorizontalLineToCursor() {
         Overlay.show();
         wait(5);
         Overlay.remove();
+        waitForUser('test');
 }
 }
+
+// Problem now is how to have the wait for user function coexist with the vert/horiz line code blocks. 
+// I don't think I can run the wait for user without exiting the code block. Might be cooked, but glad
+// I could implement the function in the first place. I don't think I can maintain the ability to undo 
+// either if I make the function quit after a certain number of points are selected. I would probably 
+// need some way for the user to signal that they have selected all points while remaining in the loop.
+// Some var that can be checked during the loop... One funny way would be detecting whether the window
+// is open, having the user close the window, and then having it automatically reopen for the next
+// selection. 
 
 // Connects cursor to vertical line
 function addVerticalLineToCursor() {
