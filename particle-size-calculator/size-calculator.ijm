@@ -20,6 +20,7 @@ var xValsCurrLaneIndex;
 var yValsCurrLane;
 var bins;
 
+// Main macro flow
 function main() {
     //print('main');
     initialize();
@@ -29,6 +30,7 @@ function main() {
     getLanes();
 }
 
+// Prompts user to crop gel
 function initialize() {
     //print('initialize');
 
@@ -480,7 +482,10 @@ function addHorizontalLineToCursor() {
 // Some var that can be checked during the loop... One funny way would be detecting whether the window
 // is open, having the user close the window, and then having it automatically reopen for the next
 // selection. Unsure what other options there are. Need something the user can interact with while they
-// are selecting ROIs. This might be the best option unfortunately. 
+// are selecting ROIs. This might be the best option unfortunately. Will test it out to see if the small
+// change in interactivity has negative effects that are worth the improvement in UI and cursor visibility.
+// Suspect that it might be, given that marking the peaks precisely is probably one of the most important 
+// factors in a successful analysis.
 
 // Connects cursor to vertical line
 function addVerticalLineToCursor() {
