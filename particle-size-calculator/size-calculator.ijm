@@ -73,7 +73,10 @@ function getStandards() {
         stdWeights = Array.sort(stdWeights);
         stdWeights = Array.reverse(stdWeights);
         stdRfVals = Array.sort(stdRfVals);
+        // Issue, macro is progressing past this getBoolean without stopping
+
         moreStandards = getBoolean('Add more standard lanes?');
+
     }
 }
 
@@ -177,6 +180,7 @@ function getRfValsFromLaneLineCursor(peakType) {
             originXVal = xValsAndOrigin[0];
             xVals = Array.slice(xValsAndOrigin, 1);
             break;
+            wait(300);
         }
 
         wait(1);
@@ -298,14 +302,28 @@ function cubicRegression(stdRfValues, stdWeights) {
 function getBackgroundConc() {
     //print('getBackgroundConc');
 
-    setTool('multi point');
-    waitForUser('Select point that reflects baseline y-value of the LDL range, then press OK.');
-    run('Clear Results');
-    run('Measure');
-    baselineY = getResult('Y');
+    waitForUser('Select point that reflects baseline y-value of the LDL range. Press space bar when finished. \nPress OK before returning to lane plot.')
+    run('Remove Overlay');
+    setTool('multi-point');
+    
+    getDimensions(w, h, c, z, f);
+    
+    while(true) {
 
-    //print(baselineY);
-    return baselineY;
+        getCursorLoc(x, y, z, m);
+        Overlay.drawLine(0, y, w, y);
+        Overlay.show();
+        
+        if (isKeyDown('space')) {
+            run('Clear Results');
+            run('Measure');
+            return getResult('Y');
+        }
+
+        wait(1);
+        Overlay.remove();
+                    
+    }
 }
 
 
