@@ -155,6 +155,10 @@ function getRfValsFromLane() {
     return RfVals;    
 }
 
+getRfValsFromLaneLineCursor() {
+    return None
+}
+
 function getLanes() {
     //print('getLanes');
     moreLanes = true;
