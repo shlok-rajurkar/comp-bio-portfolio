@@ -36,26 +36,26 @@ function initialize() {
 
     imageWidth = 0
     imageHeight = 0
-    xnum = ""
+    xnum = ''
 
     
-    run("Set Measurements...", "invert redirect=None decimal=3");
-    run("Gel Analyzer Options...", "vertical=1 horizontal=1 label");
-    run("Clear Results");
+    run('Set Measurements...', 'invert redirect=None decimal=3');
+    run('Gel Analyzer Options...', 'vertical=1 horizontal=1 label');
+    run('Clear Results');
 
-    xnum = getString("enter X number", "");
+    xnum = getString('enter X number', '');
     
-    setTool("Rectangle");
+    setTool('Rectangle');
 
     getDimensions(imageWidth, imageHeight, c, z, t);
     makeRectangle(0.3*imageWidth, 0.18*imageHeight, 0.36*imageWidth, 0.53*imageHeight);
-    waitForUser("Adjust rectangle to bound lanes and leave minimal space between top of image and top of gel. \nPressing OK will crop gel and rotate 90 degrees left.");
+    waitForUser('Adjust rectangle to bound lanes and leave minimal space between top of image and top of gel. \nPressing OK will crop gel and rotate 90 degrees left.');
 
-    run("Crop");
+    run('Crop');
     wait(100);
-    run("Rotate 90 Degrees Left");
+    run('Rotate 90 Degrees Left');
     croppedGelWindow = File.name;
-    print(xnum + " Analysis:");
+    print(xnum + ' Analysis:');
 }
 
 function getStandards() {
@@ -73,32 +73,32 @@ function getStandards() {
         stdWeights = Array.sort(stdWeights);
         stdWeights = Array.reverse(stdWeights);
         stdRfVals = Array.sort(stdRfVals);
-        moreStandards = getBoolean("Add more standard lanes?");
+        moreStandards = getBoolean('Add more standard lanes?');
     }
 }
 
 function setStandards() {
     //print('setStandards');
     selectWindow(croppedGelWindow);
-    numberOfStandards = getNumber("enter number of standards", 5);
+    numberOfStandards = getNumber('enter number of standards', 5);
     stdWeightsTemp = newArray(numberOfStandards);
     stdRfValsTemp = newArray(numberOfStandards);
     for(i = 0; i < numberOfStandards; i++){
         stdIndexDisplay = i + 1;
-        stdWeightsTemp[i] = getNumber("enter weight of standard " + stdIndexDisplay, 0);
+        stdWeightsTemp[i] = getNumber('enter weight of standard ' + stdIndexDisplay, 0);
     }
-    print("Std weights:");
+    print('Std weights:');
 
-    setTool("Rectangle");
+    setTool('Rectangle');
 
     getDimensions(standardLaneWidth, standardLaneHeight, c, z, t);
 
     makeRectangle(0, (standardLaneHeight/2)-10 , standardLaneWidth, 20);
-    waitForUser("Adjust rectangle to span lane with standards. \nIt can be quite thin as long as it contains some part of the lane.");
+    waitForUser('Adjust rectangle to span lane with standards. \nIt can be quite thin as long as it contains some part of the lane.');
     
-    run("Select First Lane");
+    run('Select First Lane');
 
-    stdRfValsTemp = getRfValsFromLane();
+    stdRfValsTemp = getRfValsFromLaneLineCursor('standard');
     stdWeightsTempAndStdRfValsTemp = Array.concat(stdWeightsTemp, stdRfValsTemp);
     return stdWeightsTempAndStdRfValsTemp;
 }
@@ -106,23 +106,23 @@ function setStandards() {
 function getRfValsFromLane() {
     //print('getRfValsFromLane');
 
-    run("Plot Profile");
+    run('Plot Profile');
 
     Plot.getValues(xValsCurrLane, yValsCurrLane);
     // Don't think subtracting index 0 is necessary here since X vals will always start at 0.
     xValsCurrLaneIndex = divideArrayByStep(xValsCurrLane, xValsCurrLane[1]-xValsCurrLane[0]);
 
-    run("Remove Overlay");
+    run('Remove Overlay');
 
-    setTool("multi-point");
+    setTool('multi-point');
 
-    waitForUser("Mark origin of lane, then press OK.");
+    waitForUser('Mark origin of lane, then press OK.');
 
-    run("Clear Results");
+    run('Clear Results');
 
-    run("Measure");
+    run('Measure');
 
-    originXVal = divideByStep(getResult("X"), xValsCurrLane[1]-xValsCurrLane[0]);
+    originXVal = divideByStep(getResult('X'), xValsCurrLane[1]-xValsCurrLane[0]);
 
     laneLength = xValsCurrLaneIndex.length - originXVal;
 
@@ -134,15 +134,15 @@ function getRfValsFromLane() {
 
     yValsCurrLane = Array.slice(yValsCurrLane, originXVal, yValsCurrLane.length);
 
-    run("Clear Results");
+    run('Clear Results');
 
-    run("Remove Overlay");
+    run('Remove Overlay');
 
-    waitForUser("Mark peaks with the multipoint tool, then press OK. \nOnly mark them from left to right, in increasing weight/diameter.");
+    waitForUser('Mark peaks with the multipoint tool, then press OK. \nOnly mark them from left to right, in increasing weight/diameter.');
 
-    run("Measure");
+    run('Measure');
 
-    xValsAndOrigin = divideArrayByStep(getAllResults("X"), xValsCurrLane[1]-xValsCurrLane[0]);
+    xValsAndOrigin = divideArrayByStep(getAllResults('X'), xValsCurrLane[1]-xValsCurrLane[0]);
 
     Array.print(xValsAndOrigin);
 
@@ -155,8 +155,35 @@ function getRfValsFromLane() {
     return RfVals;    
 }
 
-getRfValsFromLaneLineCursor() {
-    return None
+function getRfValsFromLaneLineCursor(peakType) {
+    waitForUser('When lane plot is displayed:\n1. Select the origin peak\n2. Select ' + peakType + ' peaks\n3. Press space bar when finished');
+    run('Plot Profile');
+    run('Remove Overlay');
+    setTool('multi-point');
+    Plot.getValues(xValsCurrLane, yValsCurrLane);
+    xValsCurrLaneIndex = divideArrayByStep(xValsCurrLane, xValsCurrLane[1]-xValsCurrLane[0]);
+    getDimensions(w, h, c, z, f);
+    
+    while(true) {
+
+        getCursorLoc(x, y, z, m);
+        Overlay.drawLine(x, 0, x, h);
+        Overlay.show();
+        
+        if (isKeyDown('space')) {
+            run('Clear Results');
+            run('Measure');
+            xValsAndOrigin = getAllResults('X');
+            originXVal = xValsAndOrigin[0];
+            xVals = Array.slice(xValsAndOrigin, 1);
+            break;
+        }
+
+        wait(1);
+        Overlay.remove();
+                    
+    }
+    return calcRfVals(xVals, laneLength);
 }
 
 function getLanes() {
@@ -164,23 +191,23 @@ function getLanes() {
     moreLanes = true;
     while (moreLanes) {
         quantifyLane();
-        moreLanes = getBoolean("Analyze more lanes?");
+        moreLanes = getBoolean('Analyze more lanes?');
     }
 }
 
 function quantifyLane() {
     //print('quantifyLane');
     if (stdRfVals.length == 0 || stdWeights.length == 0){
-        exit("Standards not set.");
+        exit('Standards not set.');
     }
 
     selectWindow(croppedGelWindow);
 
-    waitForUser("Drag rectangle to sample lane and press OK.");
+    waitForUser('Drag rectangle to sample lane and press OK.');
 
-    run("Select First Lane");
+    run('Select First Lane');
 
-    laneRfVals = getRfValsFromLane();
+    laneRfVals = getRfValsFromLaneLineCursor('unknown');
 
     laneMolecularWeightsCalc = newArray(laneRfVals.length);
     for (i = 0; i < laneRfVals.length; i++) {
@@ -188,7 +215,7 @@ function quantifyLane() {
         laneMolecularWeightsCalc[i] = cubicCoeffArray[0] + cubicCoeffArray[1]*x + cubicCoeffArray[2]*x*x + cubicCoeffArray[3]*x*x*x;
     }
     displayValueArray = inverseLog10Array(laneMolecularWeightsCalc);
-    print("Calculated Diameters:");
+    print('Calculated Diameters:');
     Array.print(displayValueArray);
 
     quantBins();
@@ -213,7 +240,7 @@ function quantBins() {
     binSumsTotal = mean*binSums.length;
     for (i = 0; i < binSums.length; i++) {
         binSums[i] = (binSums[i]/binSumsTotal)*100;
-        print(bins[i] + '-' + bins[i+1] + ": " + binSums[i] + "%");
+        print(bins[i] + '-' + bins[i+1] + ': ' + binSums[i] + '%');
     }
     
     //Array.print(binSums);
@@ -271,11 +298,11 @@ function cubicRegression(stdRfValues, stdWeights) {
 function getBackgroundConc() {
     //print('getBackgroundConc');
 
-    setTool("multi point");
-    waitForUser("Select point that reflects baseline y-value of the LDL range, then press OK.");
-    run("Clear Results");
-    run("Measure");
-    baselineY = getResult("Y");
+    setTool('multi point');
+    waitForUser('Select point that reflects baseline y-value of the LDL range, then press OK.');
+    run('Clear Results');
+    run('Measure');
+    baselineY = getResult('Y');
 
     //print(baselineY);
     return baselineY;
