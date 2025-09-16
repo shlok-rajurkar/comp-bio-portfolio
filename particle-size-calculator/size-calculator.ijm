@@ -42,7 +42,7 @@ function initialize() {
     run('Set Measurements...', 'invert redirect=None decimal=3');
     run('Gel Analyzer Options...', 'vertical=1 horizontal=1 label');
     run('Clear Results');
-
+    run("Overlay Options...", "stroke=red width=1 apply");
     xnum = getString('enter X number', '');
     
     setTool('Rectangle');
@@ -171,6 +171,7 @@ function getRfValsFromLaneLineCursor(peakType) {
 
         getCursorLoc(x, y, z, m);
         Overlay.drawLine(x, 0, x, h);
+        Overlay.drawLine(0, y, w, y);
         Overlay.show();
         
         if (isKeyDown('space')) {
@@ -311,6 +312,7 @@ function getBackgroundConc() {
     while(true) {
 
         getCursorLoc(x, y, z, m);
+        Overlay.drawLine(x, 0, x, h);
         Overlay.drawLine(0, y, w, y);
         Overlay.show();
         
