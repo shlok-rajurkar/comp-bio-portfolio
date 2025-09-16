@@ -480,7 +480,8 @@ function addHorizontalLineToCursor() {
 // need some way for the user to signal that they have selected all points while remaining in the loop.
 // Some var that can be checked during the loop... One funny way would be detecting whether the window
 // is open, having the user close the window, and then having it automatically reopen for the next
-// selection. 
+// selection. Unsure what other options there are. Need something the user can interact with while they
+// are selecting ROIs. This might be the best option unfortunately. 
 
 // Connects cursor to vertical line
 function addVerticalLineToCursor() {
