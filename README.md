@@ -18,7 +18,7 @@ IMPORTANT: If you receive an error, take note of the error output and restart fr
 6. For each standard lane:
     a. Enter number of standards
     b. Enter standard weights
-    c. Position rectangle to capture entire length of lane. It can be quite thin.
+    c. Position rectangle to capture entire length of lane. It can be quite thin. Press OK. Press 'Yes' if asked whether the lanes are horizontal.
     d. Mark origin of lane on plot and press OK. The origin will often present as a sharp peak signifying the edge of the gel. If you make a mistake, use Alt+Left Click to remove a point.
     e. Mark each standard peak and press OK. Make sure the number of standard peaks you mark matches the number of standards you inputted for that lane.
 7. For each sample lane:
