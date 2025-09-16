@@ -73,8 +73,7 @@ function getStandards() {
         stdWeights = Array.sort(stdWeights);
         stdWeights = Array.reverse(stdWeights);
         stdRfVals = Array.sort(stdRfVals);
-        // Issue, macro is progressing past this getBoolean without stopping
-
+        moreStandards = false;
         moreStandards = getBoolean('Add more standard lanes?');
 
     }
@@ -90,7 +89,7 @@ function setStandards() {
         stdIndexDisplay = i + 1;
         stdWeightsTemp[i] = getNumber('enter weight of standard ' + stdIndexDisplay, 0);
     }
-    print('Std weights:');
+    //print('Std weights:');
 
     setTool('Rectangle');
 
@@ -180,8 +179,9 @@ function getRfValsFromLaneLineCursor(peakType) {
             xValsAndOrigin = getAllResults('X');
             originXVal = xValsAndOrigin[0];
             xVals = Array.slice(xValsAndOrigin, 1);
-            break;
             wait(300);
+            break;
+            
         }
 
         wait(1);
