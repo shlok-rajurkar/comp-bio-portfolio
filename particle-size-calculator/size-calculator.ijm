@@ -85,7 +85,6 @@ function setStandards() {
     selectWindow(croppedGelWindow);
     numberOfStandards = getNumber('enter number of standards', 5);
     stdWeightsTemp = newArray(numberOfStandards);
-    stdRfValsTemp = newArray(numberOfStandards);
     for(i = 0; i < numberOfStandards; i++){
         stdIndexDisplay = i + 1;
         stdWeightsTemp[i] = getNumber('enter weight of standard ' + stdIndexDisplay, 0);
@@ -100,11 +99,13 @@ function setStandards() {
     waitForUser('Adjust rectangle to span lane with standards. \nIt can be quite thin as long as it contains some part of the lane.');
     
     run('Select First Lane');
-
     stdRfValsTemp = getRfValsFromLaneLineCursor('standard');
     Array.print(stdRfValsTemp);
     stdWeightsTempAndStdRfValsTemp = Array.concat(stdWeightsTemp, stdRfValsTemp);
     Array.print(stdWeightsTempAndStdRfValsTemp);
+    if (2 * numberOfStandards != stdWeightsTempAndStdRfValsTemp.length) {
+        print('Std weights or Rf vals not recorded properly.');
+    }
     return stdWeightsTempAndStdRfValsTemp;
 }
 
@@ -186,7 +187,7 @@ function getRfValsFromLaneLineCursor(peakType) {
 
             // Need to port rest of getRfals into this fn
             originXVal = xValsAndOrigin[0];
-            laneLength = xValsCurrLaneIndex.length-originXVal;
+            laneLength = xValsCurrLaneIndex.length-originXVal-1;
             xValsCurrLaneIndex = Array.slice(xValsCurrLaneIndex, originXVal, xValsCurrLaneIndex.length);
 
             for (i = 0; i < xValsCurrLaneIndex.length; i ++) {
@@ -203,11 +204,11 @@ function getRfValsFromLaneLineCursor(peakType) {
             print('xVals');
             Array.print(xVals);
             // std xvals are ok here
-            return calcRfVals(xVals, laneLength); 
-        }
-
-                    
+            RfVals = calcRfVals(xVals, laneLength);
+            return RfVals;
+        }                
     }
+    print('past while loop');
     
 }
 
@@ -323,7 +324,7 @@ function cubicRegression(stdRfValues, stdWeights) {
 function getBackgroundConc() {
     //print('getBackgroundConc');
 
-    waitForUser('Select point that reflects baseline y-value of the LDL range. Press space bar when finished. \nPress OK before returning to lane plot.')
+    waitForUser('Select point that reflects baseline y-value of the LDL range. Press space bar when finished. \nPress OK before returning to lane plot.');
     run('Remove Overlay');
     setTool('multi-point');
     
@@ -397,6 +398,8 @@ function calcRfVals(xVals, laneLength) {
     for (i = 0; i < xVals.length; i ++) {
         result[i] = xVals[i]/laneLength;
     }
+    //print('Rf');
+    //Array.print(result);
     return result;
 }
 
