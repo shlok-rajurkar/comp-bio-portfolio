@@ -77,6 +77,7 @@ function getStandards() {
         moreStandards = getBoolean('Add more standard lanes?');
 
     }
+    Array.print(stdWeights);
 }
 
 function setStandards() {
@@ -101,7 +102,9 @@ function setStandards() {
     run('Select First Lane');
 
     stdRfValsTemp = getRfValsFromLaneLineCursor('standard');
+    Array.print(stdRfValsTemp);
     stdWeightsTempAndStdRfValsTemp = Array.concat(stdWeightsTemp, stdRfValsTemp);
+    Array.print(stdWeightsTempAndStdRfValsTemp);
     return stdWeightsTempAndStdRfValsTemp;
 }
 
@@ -183,7 +186,7 @@ function getRfValsFromLaneLineCursor(peakType) {
 
             // Need to port rest of getRfals into this fn
             originXVal = xValsAndOrigin[0];
-            laneLength = xValsCurrLaneIndex.length-originXVal
+            laneLength = xValsCurrLaneIndex.length-originXVal;
             xValsCurrLaneIndex = Array.slice(xValsCurrLaneIndex, originXVal, xValsCurrLaneIndex.length);
 
             for (i = 0; i < xValsCurrLaneIndex.length; i ++) {
@@ -197,7 +200,9 @@ function getRfValsFromLaneLineCursor(peakType) {
             for (i = 0; i < xVals.length; i ++) {
                 xVals[i] = xVals[i] - originXVal;
             }
-
+            print('xVals');
+            Array.print(xVals);
+            // std xvals are ok here
             return calcRfVals(xVals, laneLength); 
         }
 
