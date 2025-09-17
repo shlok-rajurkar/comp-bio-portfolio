@@ -93,6 +93,7 @@ function setStandards() {
     Array.print(stdWeightsTemp);
     setTool('Rectangle');
 
+    selectWindow(croppedGelWindow);
     getDimensions(standardLaneWidth, standardLaneHeight, c, z, t);
 
     makeRectangle(0, (standardLaneHeight/2)-10 , standardLaneWidth, 20);
