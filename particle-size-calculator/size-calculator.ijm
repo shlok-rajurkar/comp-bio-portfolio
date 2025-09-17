@@ -26,6 +26,7 @@ function main() {
     initialize();
     getStandards();
     cubicRegression(stdRfVals, stdWeights);
+    print('Regression coefficients:');
     Array.print(cubicCoeffArray);
     getLanes();
 }
@@ -37,7 +38,6 @@ function initialize() {
     imageWidth = 0
     imageHeight = 0
     xnum = ''
-
     
     run('Set Measurements...', 'invert redirect=None decimal=3');
     run('Gel Analyzer Options...', 'vertical=1 horizontal=1 label');
@@ -64,7 +64,7 @@ function getStandards() {
     stdRfVals = newArray(0);
     moreStandards = true;
     while (moreStandards) {
-        stdWeightsTempAndStdRfValsTemp = setStandards();
+        stdWeightsTempAndStdRfValsTemp = setStandard();
         arrayLength = stdWeightsTempAndStdRfValsTemp.length;
         stdWeightsToAdd = Array.slice(stdWeightsTempAndStdRfValsTemp, 0, (arrayLength/2));
         stdRfValsToAdd = Array.slice(stdWeightsTempAndStdRfValsTemp, (arrayLength/2), arrayLength);
@@ -75,12 +75,10 @@ function getStandards() {
         stdRfVals = Array.sort(stdRfVals);
         moreStandards = false;
         moreStandards = getBoolean('Add more standard lanes?');
-
     }
-    Array.print(stdWeights);
 }
 
-function setStandards() {
+function setStandard() {
     //print('setStandards');
     selectWindow(croppedGelWindow);
     numberOfStandards = getNumber('enter number of standards', 5);
@@ -89,8 +87,7 @@ function setStandards() {
         stdIndexDisplay = i + 1;
         stdWeightsTemp[i] = getNumber('enter weight of standard ' + stdIndexDisplay, 0);
     }
-    print('Std weights:');
-    Array.print(stdWeightsTemp);
+
     setTool('Rectangle');
 
     selectWindow(croppedGelWindow);
@@ -101,9 +98,9 @@ function setStandards() {
     
     run('Select First Lane');
     stdRfValsTemp = getRfValsFromLaneLineCursor('standard');
-    Array.print(stdRfValsTemp);
+    //Array.print(stdRfValsTemp);
     stdWeightsTempAndStdRfValsTemp = Array.concat(stdWeightsTemp, stdRfValsTemp);
-    Array.print(stdWeightsTempAndStdRfValsTemp);
+    //Array.print(stdWeightsTempAndStdRfValsTemp);
     if (2 * numberOfStandards != stdWeightsTempAndStdRfValsTemp.length) {
         print('Std weights or Rf vals not recorded properly.');
     }
@@ -135,7 +132,6 @@ function getRfValsFromLaneLineCursor(peakType) {
             run('Measure');
             xValsAndOrigin = divideArrayByStep(getAllResults('X'), xValsCurrLane[1]-xValsCurrLane[0]);
 
-            // Need to port rest of getRfals into this fn
             originXVal = xValsAndOrigin[0];
             laneLength = xValsCurrLaneIndex.length-originXVal;
             xValsCurrLaneIndex = Array.slice(xValsCurrLaneIndex, originXVal, xValsCurrLaneIndex.length);
@@ -151,8 +147,8 @@ function getRfValsFromLaneLineCursor(peakType) {
             for (i = 0; i < xVals.length; i ++) {
                 xVals[i] = xVals[i] - originXVal;
             }
-            print('xVals');
-            Array.print(xVals);
+            //print('xVals');
+            //Array.print(xVals);
             // std xvals are ok here
             RfVals = calcRfVals(xVals, laneLength);
             return RfVals;
@@ -193,7 +189,8 @@ function quantifyLane() {
     displayValueArray = inverseLog10Array(laneMolecularWeightsCalc);
     print('Calculated Diameters:');
     Array.print(displayValueArray);
-
+    print('');
+    print('LDL Bins:');
     quantBins();
 
 }
@@ -223,6 +220,7 @@ function quantBins() {
 
 }
 
+
 function calcPxFromBins() {
     //print('calcPxFromBins');
     bins = newArray(
@@ -236,6 +234,7 @@ function calcPxFromBins() {
     }
     everyMW = inverseLog10Array(everyLogMW);
     binPxValues = newArray(binCount);
+
     for (j = 0; j < bins.length; j ++) {
         everyMWCopy = Array.copy(everyMW);
         for (i = 0; i < laneLength; i ++) {
