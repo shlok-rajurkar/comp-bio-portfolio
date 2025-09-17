@@ -108,53 +108,53 @@ function setStandards() {
 function getRfValsFromLane() {
     //print('getRfValsFromLane');
 
-    run('Plot Profile');
+    // run('Plot Profile');
 
-    Plot.getValues(xValsCurrLane, yValsCurrLane);
-    // Don't think subtracting index 0 is necessary here since X vals will always start at 0.
-    xValsCurrLaneIndex = divideArrayByStep(xValsCurrLane, xValsCurrLane[1]-xValsCurrLane[0]);
+    // Plot.getValues(xValsCurrLane, yValsCurrLane);
+    // // Don't think subtracting index 0 is necessary here since X vals will always start at 0.
+    // xValsCurrLaneIndex = divideArrayByStep(xValsCurrLane, xValsCurrLane[1]-xValsCurrLane[0]);
 
-    run('Remove Overlay');
+    // run('Remove Overlay');
 
-    setTool('multi-point');
+    // setTool('multi-point');
 
-    waitForUser('Mark origin of lane, then press OK.');
+    // waitForUser('Mark origin of lane, then press OK.');
 
-    run('Clear Results');
+    // run('Clear Results');
 
-    run('Measure');
+    // run('Measure');
 
-    originXVal = divideByStep(getResult('X'), xValsCurrLane[1]-xValsCurrLane[0]);
+    // originXVal = divideByStep(getResult('X'), xValsCurrLane[1]-xValsCurrLane[0]);
 
-    laneLength = xValsCurrLaneIndex.length - originXVal;
+    // laneLength = xValsCurrLaneIndex.length - originXVal;
 
-    xValsCurrLaneIndex = Array.slice(xValsCurrLaneIndex, originXVal, xValsCurrLaneIndex.length);
+    // xValsCurrLaneIndex = Array.slice(xValsCurrLaneIndex, originXVal, xValsCurrLaneIndex.length);
 
-    for (i = 0; i < xValsCurrLaneIndex.length; i ++) {
-        xValsCurrLaneIndex[i] = xValsCurrLaneIndex[i] - originXVal;
-    }
+    // for (i = 0; i < xValsCurrLaneIndex.length; i ++) {
+    //     xValsCurrLaneIndex[i] = xValsCurrLaneIndex[i] - originXVal;
+    // }
 
-    yValsCurrLane = Array.slice(yValsCurrLane, originXVal, yValsCurrLane.length);
+    // yValsCurrLane = Array.slice(yValsCurrLane, originXVal, yValsCurrLane.length);
 
-    run('Clear Results');
+    // run('Clear Results');
 
-    run('Remove Overlay');
+    // run('Remove Overlay');
 
-    waitForUser('Mark peaks with the multipoint tool, then press OK. \nOnly mark them from left to right, in increasing weight/diameter.');
+    // waitForUser('Mark peaks with the multipoint tool, then press OK. \nOnly mark them from left to right, in increasing weight/diameter.');
 
-    run('Measure');
+    // run('Measure');
 
-    xValsAndOrigin = divideArrayByStep(getAllResults('X'), xValsCurrLane[1]-xValsCurrLane[0]);
+    // xValsAndOrigin = divideArrayByStep(getAllResults('X'), xValsCurrLane[1]-xValsCurrLane[0]);
 
-    Array.print(xValsAndOrigin);
+    // Array.print(xValsAndOrigin);
 
-    xVals = Array.slice(xValsAndOrigin, 1);
+    // xVals = Array.slice(xValsAndOrigin, 1);
 
-    Array.print(xVals);
+    // Array.print(xVals);
 
-    RfVals = calcRfVals(xVals, laneLength);
+    // RfVals = calcRfVals(xVals, laneLength);
 
-    return RfVals;    
+    // return RfVals;    
 }
 
 function getRfValsFromLaneLineCursor(peakType) {
@@ -162,8 +162,11 @@ function getRfValsFromLaneLineCursor(peakType) {
     run('Plot Profile');
     run('Remove Overlay');
     setTool('multi-point');
+    run('Clear Results');
+    
     Plot.getValues(xValsCurrLane, yValsCurrLane);
     xValsCurrLaneIndex = divideArrayByStep(xValsCurrLane, xValsCurrLane[1]-xValsCurrLane[0]);
+
     getDimensions(w, h, c, z, f);
     
     while(true) {
@@ -172,23 +175,35 @@ function getRfValsFromLaneLineCursor(peakType) {
         Overlay.drawLine(x, 0, x, h);
         Overlay.drawLine(0, y, w, y);
         Overlay.show();
-        
-        if (isKeyDown('space')) {
-            run('Clear Results');
-            run('Measure');
-            xValsAndOrigin = getAllResults('X');
-            originXVal = xValsAndOrigin[0];
-            xVals = Array.slice(xValsAndOrigin, 1);
-            wait(300);
-            break;
-            
-        }
-
         wait(1);
         Overlay.remove();
+        if (isKeyDown('space')) {
+            run('Measure');
+            xValsAndOrigin = divideArrayByStep(getAllResults('X'), xValsCurrLane[1]-xValsCurrLane[0]);
+
+            // Need to port rest of getRfals into this fn
+            originXVal = xValsAndOrigin[0];
+            laneLength = xValsCurrLaneIndex.length-originXVal
+            xValsCurrLaneIndex = Array.slice(xValsCurrLaneIndex, originXVal, xValsCurrLaneIndex.length);
+
+            for (i = 0; i < xValsCurrLaneIndex.length; i ++) {
+                xValsCurrLaneIndex[i] = xValsCurrLaneIndex[i] - originXVal;
+            }
+
+            yValsCurrLane = Array.slice(yValsCurrLane, originXVal, yValsCurrLane.length);
+
+            xVals = Array.slice(xValsAndOrigin, 1);
+
+            for (i = 0; i < xVals.length; i ++) {
+                xVals[i] = xVals[i] - originXVal;
+            }
+
+            return calcRfVals(xVals, laneLength); 
+        }
+
                     
     }
-    return calcRfVals(xVals, laneLength);
+    
 }
 
 function getLanes() {
