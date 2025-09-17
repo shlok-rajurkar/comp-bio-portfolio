@@ -49,7 +49,7 @@ function initialize() {
 
     getDimensions(imageWidth, imageHeight, c, z, t);
     makeRectangle(0.3*imageWidth, 0.18*imageHeight, 0.36*imageWidth, 0.53*imageHeight);
-    waitForUser('Adjust rectangle to bound lanes and leave minimal space between top of image and top of gel. \nPressing OK will crop gel and rotate 90 degrees left.');
+    waitForUser('Adjust rectangle to bound gel. \nPressing OK will crop gel and rotate 90 degrees left.');
 
     run('Crop');
     wait(100);
