@@ -137,7 +137,7 @@ function getRfValsFromLaneLineCursor(peakType) {
 
             // Need to port rest of getRfals into this fn
             originXVal = xValsAndOrigin[0];
-            laneLength = xValsCurrLaneIndex.length-originXVal-1;
+            laneLength = xValsCurrLaneIndex.length-originXVal;
             xValsCurrLaneIndex = Array.slice(xValsCurrLaneIndex, originXVal, xValsCurrLaneIndex.length);
 
             for (i = 0; i < xValsCurrLaneIndex.length; i ++) {
