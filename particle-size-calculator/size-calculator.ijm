@@ -109,57 +109,6 @@ function setStandards() {
     return stdWeightsTempAndStdRfValsTemp;
 }
 
-function getRfValsFromLane() {
-    //print('getRfValsFromLane');
-
-    // run('Plot Profile');
-
-    // Plot.getValues(xValsCurrLane, yValsCurrLane);
-    // // Don't think subtracting index 0 is necessary here since X vals will always start at 0.
-    // xValsCurrLaneIndex = divideArrayByStep(xValsCurrLane, xValsCurrLane[1]-xValsCurrLane[0]);
-
-    // run('Remove Overlay');
-
-    // setTool('multi-point');
-
-    // waitForUser('Mark origin of lane, then press OK.');
-
-    // run('Clear Results');
-
-    // run('Measure');
-
-    // originXVal = divideByStep(getResult('X'), xValsCurrLane[1]-xValsCurrLane[0]);
-
-    // laneLength = xValsCurrLaneIndex.length - originXVal;
-
-    // xValsCurrLaneIndex = Array.slice(xValsCurrLaneIndex, originXVal, xValsCurrLaneIndex.length);
-
-    // for (i = 0; i < xValsCurrLaneIndex.length; i ++) {
-    //     xValsCurrLaneIndex[i] = xValsCurrLaneIndex[i] - originXVal;
-    // }
-
-    // yValsCurrLane = Array.slice(yValsCurrLane, originXVal, yValsCurrLane.length);
-
-    // run('Clear Results');
-
-    // run('Remove Overlay');
-
-    // waitForUser('Mark peaks with the multipoint tool, then press OK. \nOnly mark them from left to right, in increasing weight/diameter.');
-
-    // run('Measure');
-
-    // xValsAndOrigin = divideArrayByStep(getAllResults('X'), xValsCurrLane[1]-xValsCurrLane[0]);
-
-    // Array.print(xValsAndOrigin);
-
-    // xVals = Array.slice(xValsAndOrigin, 1);
-
-    // Array.print(xVals);
-
-    // RfVals = calcRfVals(xVals, laneLength);
-
-    // return RfVals;    
-}
 
 function getRfValsFromLaneLineCursor(peakType) {
     waitForUser('When lane plot is displayed:\n1. Select the origin peak\n2. Select ' + peakType + ' peaks\n3. Press space bar when finished');
