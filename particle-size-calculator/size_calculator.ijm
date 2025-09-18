@@ -76,6 +76,8 @@ function getStandards() {
         moreStandards = false;
         moreStandards = getBoolean('Add more standard lanes?');
     }
+    Array.print(stdWeights);
+    Array.print(stdRfVals);
 }
 
 function setStandard() {
@@ -130,6 +132,7 @@ function getRfValsFromLaneLineCursor(peakType) {
         Overlay.remove();
         if (isKeyDown('space')) {
             run('Measure');
+            wait(300);
             xValsAndOrigin = divideArrayByStep(getAllResults('X'), xValsCurrLane[1]-xValsCurrLane[0]);
 
             originXVal = xValsAndOrigin[0];
@@ -186,7 +189,7 @@ function quantifyLane() {
         x = laneRfVals[i];
         laneMolecularWeightsCalc[i] = cubicCoeffArray[0] + cubicCoeffArray[1]*x + cubicCoeffArray[2]*x*x + cubicCoeffArray[3]*x*x*x;
     }
-    displayValueArray = inverseLog10Array(laneMolecularWeightsCalc);
+    displayValueArray = inverseLog10ArrayDisabled(laneMolecularWeightsCalc);
     print('Calculated Diameters:');
     Array.print(displayValueArray);
     print('');
@@ -232,7 +235,7 @@ function calcPxFromBins() {
     for (i = 0; i < laneLength; i ++) {
             everyLogMW[i] = cubicCoeffArray[0] + cubicCoeffArray[1]*everyRfValue[i] + cubicCoeffArray[2]*everyRfValue[i]*everyRfValue[i] + cubicCoeffArray[3]*everyRfValue[i]*everyRfValue[i]*everyRfValue[i];
     }
-    everyMW = inverseLog10Array(everyLogMW);
+    everyMW = inverseLog10ArrayDisabled(everyLogMW);
     binPxValues = newArray(binCount);
 
     for (j = 0; j < bins.length; j ++) {
@@ -264,7 +267,7 @@ function sumSingleBin(yValArray, binLowerBound, binUpperBound) {
 
 function cubicRegression(stdRfValues, stdWeights) {
     //print('cubicRegression');
-    log10StdWeights = log10Array(stdWeights);
+    log10StdWeights = log10ArrayDisabled(stdWeights);
     cubicCoeffArray = calcStdCurveCubic(stdRfVals, log10StdWeights);
     //Array.print(cubicCoeffArray);
     return cubicCoeffArray;
@@ -353,23 +356,23 @@ function calcRfVals(xVals, laneLength) {
 }
 
 // Calculates log base 10 for every value of an array
-function log10Array(array) {
+function log10ArrayDisabled(array) {
     //print('log10Array');
-    logValues = newArray(array.length);
-    for (i = 0; i < array.length; i++){
-        logValues[i] = log(array[i])/log(10);
-    }
-    return logValues;
+    // logValues = newArray(array.length);
+    // for (i = 0; i < array.length; i++){
+    //     logValues[i] = log(array[i])/log(10);
+    // }
+    return array;
 }
 
 // Calculates inverse log 10 for every value of an array
-function inverseLog10Array(array) {
+function inverseLog10ArrayDisabled(array) {
     //print('inverseLog10Array');
-    inverseLogValues = newArray(array.length);
-    for (i = 0; i < array.length; i++){
-        inverseLogValues[i] = pow(10, array[i]);
-    }
-    return inverseLogValues;
+    // inverseLogValues = newArray(array.length);
+    // for (i = 0; i < array.length; i++){
+    //     inverseLogValues[i] = pow(10, array[i]);
+    // }
+    return array;
 }
 
 // Performs OLS regression for arrays of x values and y values
@@ -484,6 +487,87 @@ function gaussJordanFlat4x4(A, B) {
 
     return B;
 }
+
+// Calculates quartic regression coefficients 
+function calcStdCurveQuartic(xVals, yVals) {
+    //print('calcStdCurveQuartic');
+    n = xVals.length;
+
+    sumX = newArray(9); // sums of x^0 ... x^8
+    for (i = 0; i <= 8; i++) sumX[i] = 0;
+    sumXY = newArray(5); // sums of x^0*y ... x^4*y
+    for (i = 0; i <= 4; i++) sumXY[i] = 0;
+
+    for (i = 0; i < n; i++) {
+        x = xVals[i];
+        y = yVals[i];
+        powX = newArray(9);
+        powX[0] = 1;
+        for (j = 1; j <= 8; j++) powX[j] = powX[j - 1] * x;
+
+        for (j = 0; j <= 8; j++) sumX[j] += powX[j];
+        for (j = 0; j <= 4; j++) sumXY[j] += powX[j] * y;
+    }
+
+    // Flattened 5x5 matrix A
+    A = newArray(25);
+    for (i = 0; i <= 4; i++) {
+        for (j = 0; j <= 4; j++) {
+            A[i * 5 + j] = sumX[i + j];
+        }
+    }
+
+    B = sumXY;
+
+    coeffs = gaussJordanFlat5x5(A, B);
+    return coeffs; // [a, b, c, d, e]
+}
+
+// Gauss Jordan reduction of 5x5 matrix
+function gaussJordanFlat5x5(A, B) {
+    //print('gaussJordanFlat5x5');
+    n = 5;
+
+    for (i = 0; i < n; i++) {
+        // Find non-zero pivot
+        if (A[i * n + i] == 0) {
+            for (j = i + 1; j < n; j++) {
+                if (A[j * n + i] != 0) {
+                    // Swap rows in A
+                    for (k = 0; k < n; k++) {
+                        temp = A[i * n + k];
+                        A[i * n + k] = A[j * n + k];
+                        A[j * n + k] = temp;
+                    }
+                    // Swap B
+                    tmpB = B[i];
+                    B[i] = B[j];
+                    B[j] = tmpB;
+                    break;
+                }
+            }
+        }
+
+        // Normalize row
+        factor = A[i * n + i];
+        for (j = 0; j < n; j++) A[i * n + j] /= factor;
+        B[i] /= factor;
+
+        // Eliminate other rows
+        for (j = 0; j < n; j++) {
+            if (j != i) {
+                factor = A[j * n + i];
+                for (k = 0; k < n; k++) {
+                    A[j * n + k] -= factor * A[i * n + k];
+                }
+                B[j] -= factor * B[i];
+            }
+        }
+    }
+
+    return B;
+}
+
 
 // Connects cursor to horizontal line
 function addHorizontalLineToCursor() {
