@@ -13,6 +13,7 @@ var c = 0;
 var z = 0;
 var t = 0;
 var cubicCoeffArray;
+var quarticCoeffArray;
 var croppedGelWindow;
 var originXVal;
 var laneLength;
@@ -25,9 +26,10 @@ function main() {
     //print('main');
     initialize();
     getStandards();
-    cubicRegression(stdRfVals, stdWeights);
+    quarticCoeffArray = calcStdCurveQuartic(stdRfVals, stdWeights);
+    //cubicRegression(stdRfVals, stdWeights);
     print('Regression coefficients:');
-    Array.print(cubicCoeffArray);
+    Array.print(quarticCoeffArray);
     getLanes();
 }
 
@@ -184,11 +186,12 @@ function quantifyLane() {
 
     laneRfVals = getRfValsFromLaneLineCursor('unknown');
 
-    laneMolecularWeightsCalc = newArray(laneRfVals.length);
-    for (i = 0; i < laneRfVals.length; i++) {
-        x = laneRfVals[i];
-        laneMolecularWeightsCalc[i] = cubicCoeffArray[0] + cubicCoeffArray[1]*x + cubicCoeffArray[2]*x*x + cubicCoeffArray[3]*x*x*x;
-    }
+    //laneMolecularWeightsCalc = newArray(laneRfVals.length);
+    // for (i = 0; i < laneRfVals.length; i++) {
+    //     x = laneRfVals[i];
+    //     laneMolecularWeightsCalc[i] = cubicCoeffArray[0] + cubicCoeffArray[1]*x + cubicCoeffArray[2]*x*x + cubicCoeffArray[3]*x*x*x;
+    // }
+    laneMolecularWeightsCalc = predictQuartic(laneRfVals, quarticCoeffArray);
     displayValueArray = inverseLog10ArrayDisabled(laneMolecularWeightsCalc);
     print('Calculated Diameters:');
     Array.print(displayValueArray);
@@ -231,10 +234,11 @@ function calcPxFromBins() {
     );
     binCount = bins.length; 
     everyRfValue = calcRfVals(xValsCurrLaneIndex, laneLength);
-    everyLogMW = newArray(xValsCurrLaneIndex.length);
-    for (i = 0; i < laneLength; i ++) {
-            everyLogMW[i] = cubicCoeffArray[0] + cubicCoeffArray[1]*everyRfValue[i] + cubicCoeffArray[2]*everyRfValue[i]*everyRfValue[i] + cubicCoeffArray[3]*everyRfValue[i]*everyRfValue[i]*everyRfValue[i];
-    }
+    // everyLogMW = newArray(xValsCurrLaneIndex.length);
+    // for (i = 0; i < laneLength; i ++) {
+    //         everyLogMW[i] = cubicCoeffArray[0] + cubicCoeffArray[1]*everyRfValue[i] + cubicCoeffArray[2]*everyRfValue[i]*everyRfValue[i] + cubicCoeffArray[3]*everyRfValue[i]*everyRfValue[i]*everyRfValue[i];
+    // }
+    everyLogMW = predictQuartic(everyRfValue, quarticCoeffArray);
     everyMW = inverseLog10ArrayDisabled(everyLogMW);
     binPxValues = newArray(binCount);
 
@@ -269,6 +273,7 @@ function cubicRegression(stdRfValues, stdWeights) {
     //print('cubicRegression');
     log10StdWeights = log10ArrayDisabled(stdWeights);
     cubicCoeffArray = calcStdCurveCubic(stdRfVals, log10StdWeights);
+    
     //Array.print(cubicCoeffArray);
     return cubicCoeffArray;
 }
@@ -568,6 +573,18 @@ function gaussJordanFlat5x5(A, B) {
     return B;
 }
 
+// Estimates y value from x value based on quartic regression
+function predictQuartic(xVals, quarticCoeffArray) {
+    result = newArray(xVals.length);
+    for (i = 0; i < xVals.length; i ++) {
+        result[i] = quarticCoeffArray[0] + 
+                    quarticCoeffArray[1]*xVals[i] + 
+                    quarticCoeffArray[2]*xVals[i]*xVals[i] + 
+                    quarticCoeffArray[3]*xVals[i]*xVals[i]*xVals[i] +
+                    quarticCoeffArray[4]*xVals[i]*xVals[i]*xVals[i]*xVals[i];
+    }
+    return result;
+}
 
 // Connects cursor to horizontal line
 function addHorizontalLineToCursor() {
