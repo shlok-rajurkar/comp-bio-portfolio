@@ -20,6 +20,8 @@ var xValsCurrLaneIndex;
 var yValsCurrLane;
 var bins;
 
+
+
 // Main macro flow
 function main() {
     //print('main');

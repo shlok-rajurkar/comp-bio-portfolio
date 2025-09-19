@@ -297,6 +297,7 @@ function getBackgroundConc() {
         if (isKeyDown('space')) {
             run('Clear Results');
             run('Measure');
+            wait(300);
             return getResult('Y');
         }
 
