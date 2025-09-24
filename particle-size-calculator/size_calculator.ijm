@@ -56,7 +56,7 @@ function initialize() {
     run('Crop');
     wait(100);
     run('Rotate 90 Degrees Left');
-    croppedGelWindow = File.name;
+    croppedGelWindow = getTitle();
     print(xnum + ' Analysis:');
 }
 
