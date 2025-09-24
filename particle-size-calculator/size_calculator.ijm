@@ -36,10 +36,13 @@ function main() {
 // Prompts user to crop gel
 function initialize() {
     //print('initialize');
-
-    imageWidth = 0
-    imageHeight = 0
-    xnum = ''
+    if (nImages == 0) {
+        print('Error: Open an image before running Macro.');
+        exit();
+    }
+    imageWidth = 0;
+    imageHeight = 0;
+    xnum = '';
     
     run('Set Measurements...', 'invert redirect=None decimal=3');
     run('Gel Analyzer Options...', 'vertical=1 horizontal=1 label');
