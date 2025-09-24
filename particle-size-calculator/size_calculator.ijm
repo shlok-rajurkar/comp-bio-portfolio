@@ -76,6 +76,7 @@ function getStandards() {
         stdWeights = Array.reverse(stdWeights);
         stdRfVals = Array.sort(stdRfVals);
         moreStandards = false;
+        wait(300);
         moreStandards = getBoolean('Add more standard lanes?');
     }
     Array.print(stdWeights);
