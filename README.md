@@ -7,8 +7,8 @@ Instructions for installation:
 <img title='download instructions' alt='download instructions' src='/images/download_button_directions.png'>
 2. Open ImageJ. <br />
 3. In ImageJ, go to Plugins>Macros and select Install. <br />
-4. In the File Explorer Window, navigate to the location of size-calculator.ijm (probably in Downloads) and select it. Press Open. <br />
-5. The macro can now be initiated from Plugins>Macros>size-calculator. <br />
+4. In the File Explorer Window, navigate to the location of size_calculator.ijm (probably in Downloads) and select it. Press Open. <br />
+5. The macro can now be initiated from Plugins>Macros>size_calculator. <br />
 <br />
 <br />
 
