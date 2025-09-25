@@ -312,8 +312,13 @@ function getBackgroundConc() {
         Overlay.show();
         
         if (isKeyDown('space')) {
+            resultsCountBefore = nResults;
             run('Clear Results');
             run('Measure');
+            if (selectionType() != 10 || nResults - resultsCountBefore != 1) {
+                print('Error: Invalid selection. Selection must be a single point.');
+                exit();
+            }
             wait(300);
             return getResult('Y');
         }
