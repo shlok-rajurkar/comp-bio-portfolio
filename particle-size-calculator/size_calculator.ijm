@@ -98,7 +98,7 @@ function getStandards() {
 function setStandard() {
     //print('setStandards');
     selectWindow(croppedGelWindow);
-    numberOfStandards = getNumber('enter number of standards', 5);
+    numberOfStandards = getNumber('enter number of standards', 4);
     stdWeightsTemp = newArray(numberOfStandards);
     for(i = 0; i < numberOfStandards; i++){
         stdIndexDisplay = i + 1;
