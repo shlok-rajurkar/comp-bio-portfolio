@@ -38,10 +38,12 @@ function initialize() {
     //print('initialize');
     if (nImages == 0) {
         print('Error: Open an image before running Macro.');
+        selectWindow('Log');
         exit();
     }
     if (nImages > 1) {
         print('Error: Multiple images detected. Have one image open before running Macro.');
+        selectWindow('Log');
         exit();
     }
     imageWidth = 0;
@@ -63,6 +65,7 @@ function initialize() {
 
     if (selectionType() != 0) {
         print('Error: Selection must be rectangular.');
+        selectWindow('Log');
         exit();
     }
 
@@ -128,6 +131,7 @@ function setStandard() {
 function getRfValsFromLaneLineCursor(peakType) {
     if (selectionType() != 0) {
         print('Error: Selection must be rectangular.');
+        selectWindow('Log');
         exit();
     }
     waitForUser('When lane plot is displayed:\n1. Select the origin peak\n2. Select ' + peakType + ' peaks\n3. Press space bar when finished');
@@ -317,6 +321,7 @@ function getBackgroundConc() {
             run('Measure');
             if (selectionType() != 10 || nResults - resultsCountBefore != 1) {
                 print('Error: Invalid selection. Selection must be a single point.');
+                selectWindow('Log');
                 exit();
             }
             wait(300);
