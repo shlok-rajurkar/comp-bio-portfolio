@@ -51,7 +51,7 @@ function initialize() {
     run('Gel Analyzer Options...', 'vertical=1 horizontal=1 label');
     run('Clear Results');
     run("Overlay Options...", "stroke=red width=1 apply");
-    
+
     print(xnum + ' Analysis:');
 
     setTool('Rectangle');
@@ -59,7 +59,13 @@ function initialize() {
     getDimensions(imageWidth, imageHeight, c, z, t);
     makeRectangle(0.3*imageWidth, 0.18*imageHeight, 0.36*imageWidth, 0.53*imageHeight);
     waitForUser('Adjust rectangle to bound gel. \nPressing OK will crop gel and rotate 90 degrees left.');
-    if ()
+
+    currentSelectionType = selectionType();
+    if (currentSelectionType != 0) {
+        print('Error: Selection must be rectangular.');
+        exit();
+    }
+
     run('Crop');
     wait(100);
     run('Rotate 90 Degrees Left');
