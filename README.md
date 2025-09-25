@@ -1,17 +1,18 @@
 # gge-analysis-macro
-Usable in ImageJ to analyze particle size on PAGE scans:
-    Supports multiple standard lanes
-    Cubic linear regression
+Usable in ImageJ to analyze particle size on PAGE scans: <br />
+    Supports multiple standard lanes <br />
+    Quartic regression
 
-Also by default calculates amount of protein in different LDL bins (determined by MW):
+Also by default calculates amount of protein in different LDL bins (determined by MW): <br />
     Bins can be edited in macro code
 
 
 Instructions for installation:
 1. Download [the size calculator file](particle-size-calculator/size_calculator.ijm).
-2. Open ImageJ 
+<img title='download instructions' alt='download instructions' src='/images/download_instructions.png'>
+2. Open ImageJ.
 3. In ImageJ, go to Plugins>Macros and select Install.
-4. In the File Explorer Window, navigate to the location of size-calculator.ijm and select it. Press Open.
+4. In the File Explorer Window, navigate to the location of size-calculator.ijm (probably in Downloads) and select it. Press Open.
 5. The macro can now be initiated from Plugins>Macros>size-calculator
 
 
