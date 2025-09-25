@@ -1,10 +1,5 @@
-# gge-analysis-macro
-Usable in ImageJ to analyze particle size on PAGE scans: <br />
-    Supports multiple standard lanes <br />
-    Quartic regression <br />
-
-Also by default calculates amount of protein in different LDL bins (determined by MW): <br />
-    Bins can be edited in macro code <br />
+# PAGE Partizle Size Calculator
+This is a script usable in ImageJ to analyze the particle size of bands in polyacrylamide gel electrophoresis (PAGE) images/scans. It supports multiple standard lanes and uses quartic regression. By default, it will celculate the amount of protein found in different LDL bins (determined by diameter)<br />
 
 
 Instructions for installation:
