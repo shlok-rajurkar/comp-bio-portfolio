@@ -14,7 +14,8 @@ Instructions for installation:
 3. In ImageJ, go to Plugins>Macros and select Install. <br />
 4. In the File Explorer Window, navigate to the location of size-calculator.ijm (probably in Downloads) and select it. Press Open. <br />
 5. The macro can now be initiated from Plugins>Macros>size-calculator. <br />
-
+<br />
+<br />
 
 Instructions for use: <br>
 IMPORTANT: Read all instructions carefully. If you receive an error, take note of the error output and restart from step 2.
