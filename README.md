@@ -13,7 +13,7 @@ Instructions for installation:
 <br />
 
 Instructions for use: <br>
-IMPORTANT: Read all instructions carefully. If you receive an error, take note of the error output and restart from step 2.
+**IMPORTANT: Read all instructions carefully. If you receive an error, take note of the error output and restart from step 2.**
 1. Open ImageJ.
 2. Open gel file via File>Open and navigate to gel image.
 3. Initiate macro via Plugins>Macros>size_calculator. If the macro cannot be found, follow installation instructions above.
@@ -22,7 +22,7 @@ IMPORTANT: Read all instructions carefully. If you receive an error, take note o
     1. Enter number of standards.
     1. Enter standard weights.
     1. Position rectangle to capture entire length of lane. It can be quite thin. Press OK. Press 'Yes' if asked whether the lanes are horizontal.
-    1. Read displayed instructions for marking origin and standard peaks and press OK.
+    1. Read displayed instructions for marking origin and standard peaks and press OK. **It is important that the first point you mark is the origin of the lane.**
     1. Select the origin. The origin will often present as a sharp peak signifying the edge of the gel. If you make a mistake, use Alt+Left Click to remove a point.
     1. Mark each standard peak and press the space bar once finished. Make sure the number of standard peaks you mark matches the number of standards you inputted for that lane.
 6. For each sample lane:
