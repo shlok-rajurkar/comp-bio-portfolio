@@ -46,14 +46,14 @@ function initialize() {
     }
     imageWidth = 0;
     imageHeight = 0;
-    xnum = '';
-    
+    xnum = getTitle();
     run('Set Measurements...', 'invert redirect=None decimal=3');
     run('Gel Analyzer Options...', 'vertical=1 horizontal=1 label');
     run('Clear Results');
     run("Overlay Options...", "stroke=red width=1 apply");
-    xnum = getString('enter X number', '');
     
+    print(xnum + ' Analysis:');
+
     setTool('Rectangle');
 
     getDimensions(imageWidth, imageHeight, c, z, t);
@@ -63,8 +63,7 @@ function initialize() {
     run('Crop');
     wait(100);
     run('Rotate 90 Degrees Left');
-    croppedGelWindow = getTitle();
-    print(xnum + ' Analysis:');
+
 }
 
 function getStandards() {
