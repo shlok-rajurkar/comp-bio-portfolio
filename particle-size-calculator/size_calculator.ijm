@@ -51,8 +51,8 @@ function initialize() {
     run('Gel Analyzer Options...', 'vertical=1 horizontal=1 label');
     run('Clear Results');
     run("Overlay Options...", "stroke=red width=1 apply");
-
-    print(xnum + ' Analysis:');
+    print('');
+    print('Analysis of ' + xnum);
 
     setTool('Rectangle');
 
