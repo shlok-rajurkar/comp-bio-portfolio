@@ -47,6 +47,7 @@ function initialize() {
     imageWidth = 0;
     imageHeight = 0;
     xnum = getTitle();
+    croppedGelWindow = getTitle();
     run('Set Measurements...', 'invert redirect=None decimal=3');
     run('Gel Analyzer Options...', 'vertical=1 horizontal=1 label');
     run('Clear Results');
@@ -125,6 +126,10 @@ function setStandard() {
 
 
 function getRfValsFromLaneLineCursor(peakType) {
+    if (selectionType() != 0) {
+        print('Error: Selection must be rectangular.');
+        exit();
+    }
     waitForUser('When lane plot is displayed:\n1. Select the origin peak\n2. Select ' + peakType + ' peaks\n3. Press space bar when finished');
     run('Plot Profile');
     run('Remove Overlay');
