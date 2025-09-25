@@ -1,5 +1,5 @@
-# PAGE Partizle Size Calculator
-This is a script usable in ImageJ to analyze the particle size of bands in polyacrylamide gel electrophoresis (PAGE) images/scans. It supports multiple standard lanes and uses quartic regression. By default, it will celculate the amount of protein found in different LDL bins (determined by diameter)<br />
+# PAGE Particle Size Calculator
+This is a script usable in ImageJ to analyze the particle size of bands in polyacrylamide gel electrophoresis (PAGE) images/scans. It supports multiple standard lanes and uses quartic regression. By default, it will calculate the amount of protein found in different LDL bins (determined by diameter)<br />
 
 
 Instructions for installation:
