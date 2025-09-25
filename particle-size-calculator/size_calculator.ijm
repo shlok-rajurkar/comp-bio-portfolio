@@ -60,8 +60,7 @@ function initialize() {
     makeRectangle(0.3*imageWidth, 0.18*imageHeight, 0.36*imageWidth, 0.53*imageHeight);
     waitForUser('Adjust rectangle to bound gel. \nPressing OK will crop gel and rotate 90 degrees left.');
 
-    currentSelectionType = selectionType();
-    if (currentSelectionType != 0) {
+    if (selectionType() != 0) {
         print('Error: Selection must be rectangular.');
         exit();
     }
