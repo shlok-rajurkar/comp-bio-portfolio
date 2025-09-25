@@ -8,7 +8,7 @@ Also by default calculates amount of protein in different LDL bins (determined b
 
 
 Instructions for installation:
-1. Download <a href='/particle-size-calculator/size_calculator.ijm' target='_blank'>the size calculator file</a> and return to this page by clicking the back button on your browser. <br />
+1. Open <a href='/particle-size-calculator/size_calculator.ijm' target='_blank'>the size calculator file</a> and click on the download button shown below. Then, return to this page by clicking the back button on your browser. <br />
 <img title='download instructions' alt='download instructions' src='/images/download_instructions.png'>
 2. Open ImageJ. <br />
 3. In ImageJ, go to Plugins>Macros and select Install. <br />
