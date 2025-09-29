@@ -87,9 +87,7 @@ function getStandards() {
         stdRfValsToAdd = Array.slice(stdWeightsTempAndStdRfValsTemp, (arrayLength/2), arrayLength);
         stdWeights = Array.concat(stdWeights, stdWeightsToAdd);
         stdRfVals = Array.concat(stdRfVals, stdRfValsToAdd);
-        stdWeights = Array.sort(stdWeights);
-        stdWeights = Array.reverse(stdWeights);
-        stdRfVals = Array.sort(stdRfVals);
+
         moreStandards = false;
         wait(300);
         moreStandards = getBoolean('Add more standard lanes?');
