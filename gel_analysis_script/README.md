@@ -1,8 +1,9 @@
 # PAGE Particle Size Calculator
+
 This is a script usable in ImageJ to analyze the particle size of bands in polyacrylamide gel electrophoresis (PAGE) images/scans. It supports multiple standard lanes and uses quartic regression. By default, it will calculate the amount of protein found in different LDL bins (determined by diameter). A recent version of ImageJ is required to run this macro and can be found <a href='https://imagej.net/ij/download.html'>here</a>.<br />
 
-
 Instructions for installation:
+
 1. Open <a href='/particle-size-calculator/size_calculator.ijm' target='_blank'>the size calculator file</a> and click on the download button shown below. Then, return to this page by clicking the back button on your browser. <br />
 <img title='download instructions' alt='download instructions' src='/images/download_button_directions.png'>
 2. Open ImageJ. <br />
@@ -10,10 +11,12 @@ Instructions for installation:
 4. In the File Explorer Window, navigate to the location of size_calculator.ijm (probably in Downloads) and select it. Press Open. <br />
 5. The macro can now be initiated from Plugins>Macros>size_calculator. <br />
 <br />
+
 <br />
 
 Instructions for use: <br>
 **IMPORTANT: Read all instructions carefully. If you receive an error, take note of the error output and restart from step 2.**
+
 1. Open ImageJ.
 2. Open gel file via File>Open and navigate to gel image.
 3. Initiate macro via Plugins>Macros>size_calculator. If the macro cannot be found, follow installation instructions above.
@@ -34,4 +37,3 @@ Instructions for use: <br>
     1. Select baseline Y value and press the space bar once finished.
     1. Continue analyzing lanes if desired.
 7. The output in the log window will display the calculated MW/diameters of your selected peaks. By default, the macro will also try to calculate the amount of LDL in each LDL bin. Ignore this data if it is not relevant.
-
