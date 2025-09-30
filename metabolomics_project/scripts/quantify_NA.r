@@ -6,7 +6,7 @@ if (!("dplyr" %in% installed.packages()[, 1])) {
 
 library("dplyr")
 
-dataframe <- commandArgs(trailingOnly = TRUE)
+data <- commandArgs(trailingOnly = TRUE)
 
 if (class(dataframe) != 'data.frame') {
   stop('Provide a dataframe.')
