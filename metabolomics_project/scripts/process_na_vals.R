@@ -1,5 +1,4 @@
-# Takes in a dataframe and returns the percentage of NA values in each column
-
+# Functions for cleaning NA values in data files.
 required_packages <- c("dplyr", "tools")
 
 for (package in required_packages){
