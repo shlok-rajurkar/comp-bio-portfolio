@@ -22,14 +22,14 @@ quantify_na <- function(file_path) {
            , "xpt" = haven::read_xpt, "csv" = readr::read_csv)
   }
   dataframe <- read_fn(file_path)
-  if (!(class(dataframe) %in% c("data.frame", "tibble"))) {
+  if (!(inherits(dataframe, "data.frame") | inherits(dataframe, "tibble"))) {
     stop("Provide a dataframe.")
   }
 
   na_percents <- c()
 
   for (column in seq_len(ncol(dataframe))) {
-    na_percent <- sum(is.na(dataframe[[column]])) / length(dataframe[[column]])
+    na_percent <- (sum(is.na(dataframe[[column]])) / length(dataframe[[column]])) * 100
     na_percents <- c(na_percents, na_percent)
   }
 
