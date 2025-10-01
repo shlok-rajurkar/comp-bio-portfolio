@@ -16,12 +16,17 @@ for (file_path in file_paths_entered) {
   print(quantify_NA(file_path))
 }
 
-quantify_na <- function(file_path) {
-  read_fn <- {
+store_file <- function(file_path) {
+    read_fn <- {
     switch(tools::file_ext(file_path)
            , "xpt" = haven::read_xpt, "csv" = readr::read_csv)
   }
   dataframe <- read_fn(file_path)
+  dataframe
+}
+
+quantify_na <- function(dataframe) {
+
   if (!(inherits(dataframe, "data.frame") | inherits(dataframe, "tibble"))) {
     stop("Provide a dataframe.")
   }
@@ -39,3 +44,6 @@ quantify_na <- function(file_path) {
 
   na_frame
 }
+
+
+remove_missing_samples <- function()
