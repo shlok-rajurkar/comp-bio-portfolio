@@ -24,7 +24,7 @@ store_file <- function(file_path) {
   dataframe
 }
 
-quantify_na <- function(dataframe) {
+quantify_na_by_column <- function(dataframe) {
 
   if (!(inherits(dataframe, "data.frame") | inherits(dataframe, "tibble"))) {
     stop("Provide a dataframe.")
@@ -44,5 +44,17 @@ quantify_na <- function(dataframe) {
   na_frame
 }
 
+quantify_na_by_row <- function(dataframe) {
+  if (!(inherits(dataframe, "data.frame") | inherits(dataframe, "tibble"))) {
+    stop("Provide a dataframe.")
+  }
 
-remove_missing_samples <- function()
+  intact_count <- 0
+
+  for (row in seq_len(nrow(dataframe))) {
+    if (!(any(is.na(dataframe[row, ])))) {
+      intact_count <- intact_count + 1
+    }
+  }
+  intact_count / nrow(dataframe)
+}
