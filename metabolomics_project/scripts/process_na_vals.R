@@ -24,7 +24,12 @@ store_file <- function(file_path) {
   dataframe
 }
 
-quantify_na <- function(dataframe) {
+## Following two functions can be used to quantify amount and distribution of 
+## missing values
+
+# Returns a table with the ratio of each column that is NA
+
+quantify_na_by_column <- function(dataframe) {
 
   if (!(inherits(dataframe, "data.frame") | inherits(dataframe, "tibble"))) {
     stop("Provide a dataframe.")
@@ -33,7 +38,7 @@ quantify_na <- function(dataframe) {
   na_percents <- c()
 
   for (column in seq_len(ncol(dataframe))) {
-    na_percent <- (sum(is.na(dataframe[[column]])) / length(dataframe[[column]])) * 100
+    na_percent <- (sum(is.na(dataframe[[column]])) / length(dataframe[[column]]))
     na_percents <- c(na_percents, na_percent)
   }
 
@@ -44,5 +49,31 @@ quantify_na <- function(dataframe) {
   na_frame
 }
 
+# Returns the ratio of rows that have no NA values
 
-remove_missing_samples <- function()
+quantify_na_by_row <- function(dataframe) {
+  if (!(inherits(dataframe, "data.frame") | inherits(dataframe, "tibble"))) {
+    stop("Provide a dataframe.")
+  }
+
+  intact_count <- 0
+  
+  for (row in seq_len(nrow(dataframe))) {
+    if (!(any(is.na(dataframe[row, ])))) {
+      intact_count <- intact_count + 1
+    }
+  }
+  intact_count / nrow(dataframe)
+}
+
+# Removes rows with any missing values and returns new dataframe or tibble
+
+remove_na_vals <- function(dataframe) {
+  if (!(inherits(dataframe, "data.frame") | inherits(dataframe, "tibble"))) {
+    stop("Provide a dataframe.")
+  }
+  
+  intact_rows <- dataframe %>% filter(complete.cases(.))
+  
+  intact_rows
+}
