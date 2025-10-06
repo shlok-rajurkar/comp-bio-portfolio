@@ -5,7 +5,7 @@ This is a script usable in ImageJ to analyze the particle size of bands in polya
 Instructions for installation:
 
 1. Open <a href='/particle-size-calculator/size_calculator.ijm' target='_blank'>the size calculator file</a> and click on the download button shown below. Then, return to this page by clicking the back button on your browser. <br />
-<img title='download instructions' alt='download instructions' src='/images/download_button_directions.png'>
+<img title='download instructions' alt='download instructions' src= './images/download_button_directions.png'>
 2. Open ImageJ. <br />
 3. In ImageJ, go to Plugins>Macros and select Install. <br />
 4. In the File Explorer Window, navigate to the location of size_calculator.ijm (probably in Downloads) and select it. Press Open. <br />
