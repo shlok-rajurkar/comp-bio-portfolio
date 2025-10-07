@@ -9,6 +9,12 @@ for (package in required_packages){
 }
 
 
+available_fns <- c("store_file", 'quantify_na_by_column', "quantify_na_by_row", "remove_na_vals")
+print("Available functions:")
+for (fn in available_fns) {
+  print(fn)
+}
+
 # Stores xpt or csv file as dataframe
 
 store_file <- function(file_path) {
