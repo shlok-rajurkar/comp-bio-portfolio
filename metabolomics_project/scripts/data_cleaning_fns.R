@@ -1,4 +1,4 @@
-# Functions for cleaning NA values in data files.
+# Functions to assist processing and cleaning dataset
 required_packages <- c("dplyr", "tools")
 
 for (package in required_packages){
@@ -8,12 +8,8 @@ for (package in required_packages){
   library(package, character.only = TRUE)
 }
 
-file_paths_entered <- commandArgs(trailingOnly = TRUE)
 
-for (file_path in file_paths_entered) {
-  print(file_path)
-  print(quantify_NA(file_path))
-}
+# Stores xpt or csv file as dataframe
 
 store_file <- function(file_path) {
     read_fn <- {
@@ -77,3 +73,6 @@ remove_na_vals <- function(dataframe) {
   
   intact_rows
 }
+
+ # Functions to replace NA with given values like mean of column or random other value in column
+ # are readily available in R
