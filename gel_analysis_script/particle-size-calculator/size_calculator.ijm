@@ -2,8 +2,6 @@
 
 main();
 
-//Global vars, will transition away from global vars once working properly.
-
 var stdWeights;
 var stdRfVals;
 var imageWidth;
@@ -300,7 +298,8 @@ function cubicRegression(stdRfValues, stdWeights) {
 function getBackgroundConc() {
     //print('getBackgroundConc');
 
-    waitForUser('Select point that reflects baseline y-value of the LDL range. Press space bar when finished. \nPress OK before returning to lane plot.');
+    waitForUser('Select point that reflects baseline y-value of the LDL range.
+     Press space bar when finished. \nPress OK before returning to lane plot.');
     run('Remove Overlay');
     setTool('multi-point');
     
@@ -406,118 +405,6 @@ function inverseLog10ArrayDisabled(array) {
     return array;
 }
 
-// Performs OLS regression for arrays of x values and y values
-function OLSRegression(xValsForRegression, yValsForRegression) {
-    //print('OLSRegression');
-    xLength = xValsForRegression.length;
-    yLength = yValsForRegression.length;
-
-    xTotal = 0;
-    yTotal = 0;
-
-    for(i = 0; i < xLength; i++) {
-        xTotal += xValsForRegression[i];
-        yTotal += yValsForRegression[i];
-    }
-    xMean = xTotal/xLength;
-    yMean = yTotal/yLength;
-
-    numerator = 0;
-    denominator = 0;
-
-    for(i = 0; i < xLength; i++) {
-        dx = xValsForRegression[i] - xMean;
-        dy = yValsForRegression[i] - yMean;
-        numerator += dx * dy;
-        denominator += dx * dx;
-    }
-
-    regressionSlope = numerator/denominator;
-
-    regressionIntercept = yMean - regressionSlope * xMean;
-
-    return newArray(regressionSlope, regressionIntercept);
-}
-
-// Calculates cubic regression coefficients given x values and y values
-function calcStdCurveCubic(xVals, yVals) {
-    //print('calcStdCurveCubic');
-    n = xVals.length;
-
-    sumX = newArray(7);
-    for (i = 0; i <= 6; i++) sumX[i] = 0;
-    sumXY = newArray(4);
-    for (i = 0; i <= 3; i++) sumXY[i] = 0;
-
-    for (i = 0; i < n; i++) {
-        x = xVals[i];
-        y = yVals[i];
-        powX = newArray(7);
-        powX[0] = 1;
-        for (j = 1; j <= 6; j++) powX[j] = powX[j - 1] * x;
-
-        for (j = 0; j <= 6; j++) sumX[j] += powX[j];
-        for (j = 0; j <= 3; j++) sumXY[j] += powX[j] * y;
-    }
-
-    // Flattened 4x4 matrix A
-    A = newArray(16);
-    for (i = 0; i <= 3; i++) {
-        for (j = 0; j <= 3; j++) {
-            A[i * 4 + j] = sumX[i + j];
-        }
-    }
-
-    B = sumXY;
-
-    coeffs = gaussJordanFlat4x4(A, B);
-    return coeffs; // [a, b, c, d]
-}
-
-// Gauss Jordan reduction of 4x4 matrix
-function gaussJordanFlat4x4(A, B) {
-    //print('gaussJordanFlat4x4');
-    n = 4;
-
-    for (i = 0; i < n; i++) {
-        // Find non-zero pivot
-        if (A[i * 4 + i] == 0) {
-            for (j = i + 1; j < n; j++) {
-                if (A[j * 4 + i] != 0) {
-                    // Swap rows in A
-                    for (k = 0; k < n; k++) {
-                        temp = A[i * 4 + k];
-                        A[i * 4 + k] = A[j * 4 + k];
-                        A[j * 4 + k] = temp;
-                    }
-                    // Swap B
-                    tmpB = B[i];
-                    B[i] = B[j];
-                    B[j] = tmpB;
-                    break;
-                }
-            }
-        }
-
-        // Normalize row
-        factor = A[i * 4 + i];
-        for (j = 0; j < n; j++) A[i * 4 + j] /= factor;
-        B[i] /= factor;
-
-        // Eliminate other rows
-        for (j = 0; j < n; j++) {
-            if (j != i) {
-                factor = A[j * 4 + i];
-                for (k = 0; k < n; k++) {
-                    A[j * 4 + k] -= factor * A[i * 4 + k];
-                }
-                B[j] -= factor * B[i];
-            }
-        }
-    }
-
-    return B;
-}
 
 // Calculates quartic regression coefficients 
 function calcStdCurveQuartic(xVals, yVals) {
