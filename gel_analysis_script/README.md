@@ -15,7 +15,7 @@ Instructions for installation:
 <br />
 
 Instructions for use: <br>
-**IMPORTANT: Read all instructions carefully. If you receive an error, take note of the error output and restart from step 2.**
+**IMPORTANT: Read all instructions carefully. If you receive an error, take note of the error output in the Log window and restart from step 2.**
 
 1. Open ImageJ.
 2. Open gel file via File>Open and navigate to gel image.
