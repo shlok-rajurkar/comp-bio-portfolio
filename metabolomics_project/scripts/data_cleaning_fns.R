@@ -9,7 +9,8 @@ for (package in required_packages){
 }
 
 
-available_fns <- c("store_file", 'quantify_na_by_column', "quantify_na_by_row", "remove_na_vals")
+available_fns <- c("store_file", "quantify_na_by_column",
+                   "quantify_na_by_row", "remove_na_vals")
 print("Available functions:")
 for (fn in available_fns) {
   print(fn)
@@ -18,7 +19,7 @@ for (fn in available_fns) {
 # Stores xpt or csv file as dataframe
 
 store_file <- function(file_path) {
-    read_fn <- {
+  read_fn <- {
     switch(tools::file_ext(file_path)
            , "xpt" = haven::read_xpt, "csv" = readr::read_csv)
   }
@@ -26,7 +27,7 @@ store_file <- function(file_path) {
   dataframe
 }
 
-## Following two functions can be used to quantify amount and distribution of 
+## Following two functions can be used to quantify amount and distribution of
 ## missing values
 
 # Returns a table with the ratio of each column that is NA
@@ -40,7 +41,8 @@ quantify_na_by_column <- function(dataframe) {
   na_percents <- c()
 
   for (column in seq_len(ncol(dataframe))) {
-    na_percent <- (sum(is.na(dataframe[[column]])) / length(dataframe[[column]]))
+    na_percent <- (sum(is.na(dataframe[[column]]))
+                   / length(dataframe[[column]]))
     na_percents <- c(na_percents, na_percent)
   }
 
@@ -59,7 +61,7 @@ quantify_na_by_row <- function(dataframe) {
   }
 
   intact_count <- 0
-  
+
   for (row in seq_len(nrow(dataframe))) {
     if (!(any(is.na(dataframe[row, ])))) {
       intact_count <- intact_count + 1
@@ -74,11 +76,12 @@ remove_na_vals <- function(dataframe) {
   if (!(inherits(dataframe, "data.frame") | inherits(dataframe, "tibble"))) {
     stop("Provide a dataframe.")
   }
-  
+
   intact_rows <- dataframe %>% filter(complete.cases(.))
-  
+
   intact_rows
 }
 
- # Functions to replace NA with given values like mean of column or random other value in column
- # are readily available in R
+# Functions to replace NA with given values
+# like mean of column or random other value in column
+# are readily available in R
