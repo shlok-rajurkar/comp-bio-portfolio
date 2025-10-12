@@ -2,6 +2,8 @@
 
 main();
 
+
+// Global vars
 var stdWeights;
 var stdRfVals;
 var imageWidth;
