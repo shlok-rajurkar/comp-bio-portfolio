@@ -15,3 +15,14 @@ function placeSingleGaussian(start, stop)
     print(stop)
 end
 
+-- Function to place many gaussian based on given bin values
+-- Check array format
+
+function binGaussian(bins)
+    for i = 1, #bins, 1
+    do 
+        placeSingleGaussian(bins[i], bins[i+1])
+    end
+end
+
+binGaussian(bins)
