@@ -1,4 +1,7 @@
--- Placeholder file for potentially more complex workflows
+-- Divides a single spectrum into Gaussian curves based on bins,
+-- which can be edited below. By default, uses 
+
+-- Define bins based on IM parameters
 
 local bins = {0, 7.65, 10.5, 14.5, 18, 19, 19.9,
         20.49, 20.82, 21.41, 22, 22.46, 
