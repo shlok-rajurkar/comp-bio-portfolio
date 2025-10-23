@@ -1,4 +1,4 @@
-A = (x>50)
+A = (x>1)
 guess Gaussian
 guess Gaussian
 guess Gaussian
