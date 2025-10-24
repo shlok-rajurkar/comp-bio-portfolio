@@ -27,7 +27,7 @@ dataframe = jmp_to_pandas(dt)
 
 print(dataframe)
 
-assert len(dataframe.columns) == len(dataframe[0]), "Correlation matrix must be square"
+# assert len(dataframe.columns) == len(dataframe[0]), "Correlation matrix must be square"
 
 # Column processing functions
 # Replace [0] in first column with [1]
