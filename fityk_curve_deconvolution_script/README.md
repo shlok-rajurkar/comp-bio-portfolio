@@ -1,3 +1,3 @@
 # Curve deconvolution script for fityk
 
-lua or python
+.lua or .fit
