@@ -1,4 +1,4 @@
-A = (x>1)
+(*Simple fityk script to guess 8 Gaussians and fit 3 times*)
 guess Gaussian
 guess Gaussian
 guess Gaussian
