@@ -20,11 +20,9 @@ var bins;
 
 // Main macro flow
 function main() {
-    //print('main');
     initialize();
     getStandards();
     quarticCoeffArray = calcStdCurveQuartic(stdRfVals, stdWeights);
-    //cubicRegression(stdRfVals, stdWeights);
     print('Regression coefficients:');
     Array.print(quarticCoeffArray);
     getLanes();
@@ -32,7 +30,6 @@ function main() {
 
 // Prompts user to crop gel
 function initialize() {
-    //print('initialize');
     if (nImages == 0) {
         print('Error: Open an image before running Macro.');
         selectWindow('Log');
@@ -73,7 +70,6 @@ function initialize() {
 }
 
 function getStandards() {
-    //print('getStandards');
     stdWeights = newArray(0);
     stdRfVals = newArray(0);
     moreStandards = true;
@@ -94,7 +90,6 @@ function getStandards() {
 }
 
 function setStandard() {
-    //print('setStandards');
     selectWindow(croppedGelWindow);
     numberOfStandards = getNumber('enter number of standards', 4);
     stdWeightsTemp = newArray(numberOfStandards);
@@ -112,10 +107,10 @@ function setStandard() {
     waitForUser('Adjust rectangle to span lane with standards. \nIt can be quite thin as long as it contains some part of the lane.');
     
     run('Select First Lane');
+
     stdRfValsTemp = getRfValsFromLaneLineCursor('standard');
-    //Array.print(stdRfValsTemp);
     stdWeightsTempAndStdRfValsTemp = Array.concat(stdWeightsTemp, stdRfValsTemp);
-    //Array.print(stdWeightsTempAndStdRfValsTemp);
+
     if (2 * numberOfStandards != stdWeightsTempAndStdRfValsTemp.length) {
         print('Std weights or Rf vals not recorded properly.');
     }
@@ -168,9 +163,7 @@ function getRfValsFromLaneLineCursor(peakType) {
             for (i = 0; i < xVals.length; i ++) {
                 xVals[i] = xVals[i] - originXVal;
             }
-            //print('xVals');
-            //Array.print(xVals);
-            // std xvals are ok here
+
             RfVals = calcRfVals(xVals, laneLength);
             return RfVals;
         }                
@@ -180,7 +173,6 @@ function getRfValsFromLaneLineCursor(peakType) {
 }
 
 function getLanes() {
-    //print('getLanes');
     moreLanes = true;
     while (moreLanes) {
         quantifyLane();
@@ -189,7 +181,6 @@ function getLanes() {
 }
 
 function quantifyLane() {
-    //print('quantifyLane');
     if (stdRfVals.length == 0 || stdWeights.length == 0){
         exit('Standards not set.');
     }
@@ -202,11 +193,6 @@ function quantifyLane() {
 
     laneRfVals = getRfValsFromLaneLineCursor('unknown');
 
-    //laneMolecularWeightsCalc = newArray(laneRfVals.length);
-    // for (i = 0; i < laneRfVals.length; i++) {
-    //     x = laneRfVals[i];
-    //     laneMolecularWeightsCalc[i] = cubicCoeffArray[0] + cubicCoeffArray[1]*x + cubicCoeffArray[2]*x*x + cubicCoeffArray[3]*x*x*x;
-    // }
     laneMolecularWeightsCalc = predictQuartic(laneRfVals, quarticCoeffArray);
     displayValueArray = inverseLog10ArrayDisabled(laneMolecularWeightsCalc);
     print('Calculated Diameters:');
@@ -218,12 +204,9 @@ function quantifyLane() {
 }
 
 function quantBins() {
-    //print('quantBins');
     binPxValues = calcPxFromBins();
     baselineY = getBackgroundConc();
     Array.getStatistics(yValsCurrLane, min, max, mean, stdDev);
-    //print(min, max, mean, stdDev);
-    //Array.print(yValsCurrLane);
     for (i = 0; i < yValsCurrLane.length; i++) {
     yValsCurrLane[i] = yValsCurrLane[i] - baselineY;
     }
@@ -237,23 +220,15 @@ function quantBins() {
         binSums[i] = (binSums[i]/binSumsTotal)*100;
         print(bins[i] + '-' + bins[i+1] + ': ' + binSums[i] + '%');
     }
-    
-    //Array.print(binSums);
-
 }
 
 
 function calcPxFromBins() {
-    //print('calcPxFromBins');
     bins = newArray(
     375, 339, 321, 315, 309, 303, 297, 291, 285, 272, 265, 256, 247, 242, 233, 220
     );
     binCount = bins.length; 
     everyRfValue = calcRfVals(xValsCurrLaneIndex, laneLength);
-    // everyLogMW = newArray(xValsCurrLaneIndex.length);
-    // for (i = 0; i < laneLength; i ++) {
-    //         everyLogMW[i] = cubicCoeffArray[0] + cubicCoeffArray[1]*everyRfValue[i] + cubicCoeffArray[2]*everyRfValue[i]*everyRfValue[i] + cubicCoeffArray[3]*everyRfValue[i]*everyRfValue[i]*everyRfValue[i];
-    // }
     everyLogMW = predictQuartic(everyRfValue, quarticCoeffArray);
     everyMW = inverseLog10ArrayDisabled(everyLogMW);
     binPxValues = newArray(binCount);
@@ -271,32 +246,22 @@ function calcPxFromBins() {
             }
         }
     }
-    //Array.print(binPxValues);
     return binPxValues;
 }
 
 function sumSingleBin(yValArray, binLowerBound, binUpperBound) {
-    //print('sumSingleBin');
     slicedArray = Array.slice(yValArray, binLowerBound, binUpperBound);
-    //Array.print(slicedArray);
     Array.getStatistics(slicedArray, min, max, mean, stdDev);
-    //print(min, max, mean, stdDev);
-    //Array.print(slicedArray);
     return slicedArray.length * mean;
 }
 
 function cubicRegression(stdRfValues, stdWeights) {
-    //print('cubicRegression');
     log10StdWeights = log10ArrayDisabled(stdWeights);
     cubicCoeffArray = calcStdCurveCubic(stdRfVals, log10StdWeights);
-    
-    //Array.print(cubicCoeffArray);
     return cubicCoeffArray;
 }
 
 function getBackgroundConc() {
-    //print('getBackgroundConc');
-
     waitForUser('Select point that reflects baseline y-value of the LDL range.
      Press space bar when finished. \nPress OK before returning to lane plot.');
     run('Remove Overlay');
@@ -374,40 +339,28 @@ function getAllResults(column) {
 
 // Calculates Rf vaules given an array of x values and total lane length
 function calcRfVals(xVals, laneLength) {
-    //print('calcRfVals');
     result = newArray(xVals.length);
     for (i = 0; i < xVals.length; i ++) {
         result[i] = xVals[i]/laneLength;
     }
-    //print('Rf');
-    //Array.print(result);
     return result;
 }
 
-// Calculates log base 10 for every value of an array
+// Calculates log base 10 for every value of an array 
+// Disabled in this version of script to align with old script results
 function log10ArrayDisabled(array) {
-    //print('log10Array');
-    // logValues = newArray(array.length);
-    // for (i = 0; i < array.length; i++){
-    //     logValues[i] = log(array[i])/log(10);
-    // }
     return array;
 }
 
 // Calculates inverse log 10 for every value of an array
+// Disabled in this version of script to align with old script results
 function inverseLog10ArrayDisabled(array) {
-    //print('inverseLog10Array');
-    // inverseLogValues = newArray(array.length);
-    // for (i = 0; i < array.length; i++){
-    //     inverseLogValues[i] = pow(10, array[i]);
-    // }
     return array;
 }
 
 
 // Calculates quartic regression coefficients 
 function calcStdCurveQuartic(xVals, yVals) {
-    //print('calcStdCurveQuartic');
     n = xVals.length;
 
     sumX = newArray(9); // sums of x^0 ... x^8
@@ -442,7 +395,6 @@ function calcStdCurveQuartic(xVals, yVals) {
 
 // Gauss Jordan reduction of 5x5 matrix
 function gaussJordanFlat5x5(A, B) {
-    //print('gaussJordanFlat5x5');
     n = 5;
 
     for (i = 0; i < n; i++) {
@@ -499,6 +451,7 @@ function predictQuartic(xVals, quarticCoeffArray) {
 }
 
 // Connects cursor to horizontal line
+// Legacy, done within point selection fn in current version
 function addHorizontalLineToCursor() {
     getDimensions(w, h, c, z, f);
     while(true) {
@@ -512,6 +465,7 @@ function addHorizontalLineToCursor() {
 
 
 // Connects cursor to vertical line
+// Legacy, done within point selection fn in current version
 function addVerticalLineToCursor() {
     getDimensions(w, h, c, z, f);
     while(true) {
