@@ -38,17 +38,26 @@ def process_first_col(col):
 # Replace [i] in middle columns with np.mean([i-1], [i+1])
 
 def process_middle_col(col):
-    for i in len(col):
+    for i in np.arange(len(col)):
         if col[i] == 1:
             col[i] = np.mean([col[i-1], col[i+1]])
 
 # Replace last value in last column with second to last value
 
 def process_last_col(col):
-    col[len(col)] = col[len(col) - 1]
+    print(col)
+    col[len(col) - 1] = col[len(col) - 2]
 
+def process_df(pd_df):
+    process_first_col(pd_df.iloc[:, 0])
+    for i in np.arange(0, len(pd_df.columns) - 2):
+        process_middle_col(pd_df.iloc[:, i+1])
+    print(len(pd_df.columns))
+    process_last_col(pd_df.iloc[:, len(pd_df.columns) - 1])
 
+process_df(dataframe)
 
+print(dataframe)
 
 
 
