@@ -2,6 +2,7 @@
 
 import jmp
 import jmputils
+import sys
 
 jmputils.jpip('install --upgrade', 'pip setuptools')
 jmputils.jpip('install', 'numpy pandas')
@@ -45,7 +46,6 @@ def process_middle_col(col):
 # Replace last value in last column with second to last value
 
 def process_last_col(col):
-    print(col)
     col[len(col) - 1] = col[len(col) - 2]
 
 def process_df(pd_df):
@@ -59,6 +59,6 @@ process_df(dataframe)
 
 print(dataframe)
 
-
+dataframe.to_csv()
 
 
