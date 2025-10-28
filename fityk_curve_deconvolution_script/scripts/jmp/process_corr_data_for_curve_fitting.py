@@ -52,13 +52,12 @@ def process_df(pd_df):
     process_first_col(pd_df.iloc[:, 0])
     for i in np.arange(0, len(pd_df.columns) - 2):
         process_middle_col(pd_df.iloc[:, i+1])
-    print(len(pd_df.columns))
     process_last_col(pd_df.iloc[:, len(pd_df.columns) - 1])
 
 process_df(dataframe)
 
 print(dataframe)
 
-dataframe.to_csv()
+dataframe.to_csv(str(dt) + '.csv',index=False)
 
 
