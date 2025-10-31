@@ -45,7 +45,7 @@ end
 -- Check array format
 
 function binGaussian(bins)
-    for i = 1, #bins, 1
+    for i = 1, #bins - 1, 1
     do 
         placeSingleGaussian(bins[i], bins[i+1])
     end
