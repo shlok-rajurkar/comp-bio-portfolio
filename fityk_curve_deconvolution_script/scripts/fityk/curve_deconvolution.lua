@@ -32,6 +32,15 @@ function placeSingleGaussian(start, stop)
     print(stop)
 end
 
+-- Runs fityk command "fit" 5 times (typically enough for the fit to not change much)
+
+function fitCurves()
+    for _ = 1, 5, 1
+    do
+        F:execute("@*: fit")
+    end
+end
+
 -- Function to place many gaussian based on given bin values
 -- Check array format
 
@@ -42,4 +51,6 @@ function binGaussian(bins)
     end
 end
 
-binGaussian()
+-- restrictRange()
+binGaussian(mzCorrBins)
+fitCurves()
