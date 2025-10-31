@@ -9,9 +9,20 @@ local standardIMBins = {
         23.33, 25, 29.6, 33.5, 42.4, 52.29136658
 }
 
+-- Manually defined bins based on MZ correlation data
+
 local mzCorrBins = {
+    7.65, 9, 10.5, 12.5, 14.5, 15, 16, 18, 20, 23.33, 29.59
 
 }
+
+-- Need to restrict range in a single line because later calls
+-- overwrite previous ones...
+
+-- function restrictRange()
+--     F:execute("@*: A = x > 7.65")
+--     F:execute("@* A = x < 29.6")
+-- end
 
 -- Function to place single gaussian based on start and end values
 
