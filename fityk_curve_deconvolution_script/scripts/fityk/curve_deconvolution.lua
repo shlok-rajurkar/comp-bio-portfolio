@@ -51,6 +51,6 @@ function binGaussian(bins)
     end
 end
 
--- restrictRange()
+restrictRange()
 binGaussian(mzCorrBins)
 fitCurves()
