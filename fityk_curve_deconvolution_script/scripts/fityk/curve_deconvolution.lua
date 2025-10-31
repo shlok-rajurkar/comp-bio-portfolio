@@ -19,10 +19,10 @@ local mzCorrBins = {
 -- Need to restrict range in a single line because later calls
 -- overwrite previous ones...
 
--- function restrictRange()
---     F:execute("@*: A = x > 7.65")
---     F:execute("@* A = x < 29.6")
--- end
+function restrictRange()
+    F:execute("@*: A = a and not (1 < x)")
+    F:execute("@*: A = a or (7.65 < x and x < 29.59)")
+end
 
 -- Function to place single gaussian based on start and end values
 
