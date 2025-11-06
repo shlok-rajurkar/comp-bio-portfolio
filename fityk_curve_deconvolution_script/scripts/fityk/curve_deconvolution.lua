@@ -54,3 +54,10 @@ end
 restrictRange()
 binGaussian(mzCorrBins)
 fitCurves()
+
+-- Optional line to export data in .peaks format
+-- (tab separated values)
+
+function exportPeaks()
+    F:execute("@*: info peaks > 'Z:/User Folders/SRajurkar/X3726/Peak Data/'")
+end
