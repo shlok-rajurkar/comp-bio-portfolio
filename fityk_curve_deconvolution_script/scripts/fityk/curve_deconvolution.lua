@@ -3,6 +3,8 @@
 
 -- Define bins based on IM parameters
 
+local peakFolder = "/path/to/your/peaks/folder/"
+
 local standardIMBins = {
     0, 7.65, 10.5, 14.5, 18, 19, 19.9, 
         20.49, 20.82, 21.41, 22, 22.46, 
@@ -16,12 +18,18 @@ local mzCorrBins = {
 
 }
 
+-- Modified IM bins for single 1200 pt sample
+
+local modifiedIMBins = {
+    7.65, 
+}
+
 -- Need to restrict range in a single line because later calls
 -- overwrite previous ones...
 
 function restrictRange()
     F:execute("@*: A = a and not (1 < x)")
-    F:execute("@*: A = a or (7.65 < x and x < 29.59)")
+    F:execute("@*: A = a or (7.65 < x and x < 32)")
 end
 
 -- Function to place single gaussian based on start and end values
@@ -59,5 +67,5 @@ fitCurves()
 -- (tab separated values)
 
 function exportPeaks()
-    F:execute("@*: info peaks > 'Z:/User Folders/SRajurkar/X3726/Peak Data/'")
+    F:execute("@*: info peaks > " .. peakFolder .. "output.peaks")
 end
