@@ -23,12 +23,10 @@ local mzCorrBins = {
 -- Modified IM bins for single 1200 pt sample
 
 local modifiedIMBins = {
-    7.65, 
+    7.65, 10, 13, 18, 22, 32
 }
 
--- Need to restrict range in a single line because later calls
--- overwrite previous ones...
-
+-- Function to restrict range to relevant x values
 function restrictRange()
     F:execute("@*: A = a and not (1 < x)")
     F:execute("@*: A = a or (7.65 < x and x < 32)")
@@ -36,8 +34,8 @@ end
 
 -- Function to place single gaussian based on start and end values
 
-function placeSingleGaussian(start, stop)
-    F:execute("@*: guess Gaussian [" .. start .. ":" .. stop .. "]")
+function placeSingleCurve(start, stop, curveType)
+    F:execute("@*: guess " .. curveType .. " [" .. start .. ":" .. stop .. "]")
     print(start)
     print(stop)
 end
@@ -57,7 +55,16 @@ end
 function binGaussian(bins)
     for i = 1, #bins - 1, 1
     do 
-        placeSingleGaussian(bins[i], bins[i+1])
+        placeSingleCurve(bins[i], bins[i+1], "Gaussian")
+    end
+end
+
+-- Function to place many lorentzian based on given bin values
+
+function binLorentzian(bins)
+    for i = 1, #bins - 1, 1
+    do 
+        placeSingleCurve(bins[i], bins[i+1], "Lorentzian")
     end
 end
 
@@ -71,15 +78,19 @@ function openCAPCurveSubset()
 end
 
 
-openCAPCurveSubset()
-restrictRange()
-binGaussian(mzCorrBins)
-fitCurves()
-
 
 -- Optional line to export data in .peaks format
 -- (tab separated values)
 
 function exportPeaks()
-    F:execute("@*: info peaks > " .. peakFolder .. "output.peaks")
+    F:execute("@*: info peaks > " .. peakFolder .. "output.peaks") 
 end
+
+
+
+openCAPCurveSubset()
+restrictRange()
+binLorentzian(modifiedIMBins)
+fitCurves()
+-- binGaussian(mzCorrBins)
+-- fitCurves()
