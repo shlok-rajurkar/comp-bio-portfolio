@@ -5,6 +5,8 @@
 
 local peakFolder = "/path/to/your/peaks/folder/"
 
+
+
 local standardIMBins = {
     0, 7.65, 10.5, 14.5, 18, 19, 19.9, 
         20.49, 20.82, 21.41, 22, 22.46, 
@@ -59,9 +61,21 @@ function binGaussian(bins)
     end
 end
 
+-- Function to open CAP curve subset files
+
+function openCAPCurveSubset()
+    for i = 3, 30, 1
+    do 
+        F:execute("@+ < 'Z:/User Folders/SRajurkar/X3726/CAP Baseline subset n = 30.csv:1:" .. i .. "::'")
+    end
+end
+
+
+openCAPCurveSubset()
 restrictRange()
 binGaussian(mzCorrBins)
 fitCurves()
+
 
 -- Optional line to export data in .peaks format
 -- (tab separated values)
