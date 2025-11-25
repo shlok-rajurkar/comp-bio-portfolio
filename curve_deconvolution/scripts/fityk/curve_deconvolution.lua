@@ -71,7 +71,7 @@ end
 -- Function to open CAP curve subset files
 
 function openCAPCurveSubset()
-    for i = 3, 30, 1
+    for i = 3, 32, 1
     do 
         F:execute("@+ < 'Z:/User Folders/SRajurkar/X3726/CAP Baseline subset n = 30.csv:1:" .. i .. "::'")
     end
