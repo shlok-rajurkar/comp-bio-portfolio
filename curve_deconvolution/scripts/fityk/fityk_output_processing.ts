@@ -26,7 +26,7 @@ function main(workbook: ExcelScript.Workbook) {
   const inputColB = 1;
   const inputColD = 3;
 
-  const lowerBound = 14.5;
+  const lowerBound = 12;
   const upperBound = 18;
 
   let sampleID = 0;
