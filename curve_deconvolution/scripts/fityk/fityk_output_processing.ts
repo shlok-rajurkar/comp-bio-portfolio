@@ -19,7 +19,8 @@ function main(workbook: ExcelScript.Workbook) {
   outputData.push([
     "Sample ID",
     "Center",
-    "Area"
+    "Area",
+    "FWHM"
   ])
 
   const inputColA = 0;
@@ -33,6 +34,9 @@ function main(workbook: ExcelScript.Workbook) {
   let numMZCurves = 0;
   let mZCurveArea: number | string = 0;
   let mZCurveCenter: number | string = 0;
+  let fullWidthHalfMax: number | string = 0;
+
+
   for (let i = 0; i < values.length; i++) {
 
     const row = values[i];
@@ -49,6 +53,7 @@ function main(workbook: ExcelScript.Workbook) {
     if (row[1] > lowerBound && row[1] < upperBound) {
         mZCurveCenter = row[1];
         mZCurveArea = row[3];
+        fullWidthHalfMax = row[4];
         numMZCurves++;
     }
 
@@ -58,17 +63,20 @@ function main(workbook: ExcelScript.Workbook) {
                 outputData.push([
                 sampleID,
                 mZCurveCenter, 
-                mZCurveArea
+                mZCurveArea,
+                fullWidthHalfMax
                 ])
             } else if (numMZCurves === 0) {
                 outputData.push([
                 sampleID,
+                "none",
                 "none",
                 "none"
                 ])
             } else {
                 outputData.push([
                 sampleID,
+                "excess",
                 "excess",
                 "excess"
                 ])
@@ -77,6 +85,7 @@ function main(workbook: ExcelScript.Workbook) {
         numMZCurves = 0;
         mZCurveCenter = "none";
         mZCurveArea = "none"
+        fullWidthHalfMax = "none";
     }
 
 
@@ -84,10 +93,10 @@ function main(workbook: ExcelScript.Workbook) {
   }
 
   if (outputData.length > 0) {
-    worksheet.getRange("J:L").clear();
+    worksheet.getRange("J:M").clear();
 
     const outputRange = worksheet.getRangeByIndexes(
-      0, 9, outputData.length, 3);
+      0, 9, outputData.length, 4);
       outputRange.setValues(outputData);
 
   }
