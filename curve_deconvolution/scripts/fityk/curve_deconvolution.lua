@@ -43,10 +43,7 @@ end
 -- Runs fityk command "fit" 5 times (typically enough for the fit to not change much)
 
 function fitCurves()
-    for _ = 1, 5, 1
-    do
-        F:execute("@*: fit")
-    end
+    F:execute("@*: fit")
 end
 
 -- Function to place many gaussian based on given bin values
@@ -71,9 +68,9 @@ end
 -- Function to open CAP curve subset files
 
 function openCAPCurveSubset()
-    for i = 3, 32, 1
+    for i = 2, 201, 1
     do 
-        F:execute("@+ < 'Z:/User Folders/SRajurkar/X3726/CAP Baseline subset n = 30.csv:1:" .. i .. "::'")
+        F:execute("@+ < 'Z:/User Folders/SRajurkar/X3726/CAP Baseline subset n = 200/1200 pt data.csv:1:" .. i .. "::'")
     end
 end
 
