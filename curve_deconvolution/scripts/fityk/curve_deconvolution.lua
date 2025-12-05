@@ -23,7 +23,7 @@ local mzCorrBins = {
 -- Modified IM bins for single 1200 pt sample
 
 local modifiedIMBins = {
-    7.65, 10, 13, 18, 22, 32
+    7.65, 10, 13, 18, 22, 26, 32
 }
 
 -- Function to restrict range to relevant x values
@@ -43,6 +43,7 @@ end
 -- Runs fityk command "fit" 5 times (typically enough for the fit to not change much)
 
 function fitCurves()
+    F:execute("@*: fit")
     F:execute("@*: fit")
 end
 
