@@ -12,7 +12,16 @@ function main(workbook: ExcelScript.Workbook) {
     return
   }
 
-  const values = dataRange.getValues();
+  let values = dataRange.getValues();
+  values.push([
+    "END",
+    "END",
+    "END",
+    "END",
+    "END",
+    "END"
+  ])
+
 
   const outputData: (string | number)[][] = [];
 
@@ -32,19 +41,22 @@ function main(workbook: ExcelScript.Workbook) {
 
   let sampleID = 0;
   let numMZCurves = 0;
-  let mZCurveArea: number | string = 0;
-  let mZCurveCenter: number | string = 0;
-  let fullWidthHalfMax: number | string = 0;
+  let mZCurveArea: number | string | boolean = 0;
+  let mZCurveCenter: number | string | boolean = 0;
+  let fullWidthHalfMax: number | string | boolean = 0;
 
+// console.log(values);
 
   for (let i = 0; i < values.length; i++) {
 
     const row = values[i];
 
-    if (row.length <= inputColD) {
-      continue;
-    }
 
+
+    // if (row.length <= inputColD) {
+    //   continue;
+    // }
+    // console.log(i);
     if (row[1] == "Center") {
         sampleID++;
         continue;
@@ -57,7 +69,7 @@ function main(workbook: ExcelScript.Workbook) {
         numMZCurves++;
     }
 
-    if (row[0] == "") {
+    if (row[0] == "" || row[0] == "END") {
         if (sampleID > 0) {
             if (numMZCurves === 1) {
                 outputData.push([
