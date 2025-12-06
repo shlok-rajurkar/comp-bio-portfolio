@@ -23,13 +23,13 @@ local mzCorrBins = {
 -- Modified IM bins for single 1200 pt sample
 
 local modifiedIMBins = {
-    7.65, 10, 13, 18, 22, 26, 32
+    3.75, 7.65, 10, 13, 18, 22, 26, 32
 }
 
 -- Function to restrict range to relevant x values
-function restrictRange()
+function restrictRange(start, stop)
     F:execute("@*: A = a and not (1 < x)")
-    F:execute("@*: A = a or (7.65 < x and x < 32)")
+    F:execute("@*: A = a or (" .. start .. "< x and x < " .. stop ..")")
 end
 
 -- Function to place single gaussian based on start and end values
@@ -87,7 +87,7 @@ end
 
 
 openCAPCurveSubset()
-restrictRange()
+restrictRange(3.75, 32)
 binLorentzian(modifiedIMBins)
 fitCurves()
 -- binGaussian(mzCorrBins)
