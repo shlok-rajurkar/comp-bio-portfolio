@@ -23,7 +23,7 @@ local mzCorrBins = {
 -- Modified IM bins for single 1200 pt sample
 
 local modifiedIMBins = {
-    3.75, 7.65, 10, 13, 18, 22, 26, 32
+    3.65, 7.65, 10, 13, 18, 22, 26, 32
 }
 
 -- Function to restrict range to relevant x values
@@ -69,7 +69,7 @@ end
 -- Function to open CAP curve subset files
 
 function openCAPCurveSubset()
-    for i = 2, 201, 1
+    for i = 2, 31, 1
     do 
         F:execute("@+ < 'Z:/User Folders/SRajurkar/X3726/CAP Baseline subset n = 200/1200 pt data.csv:1:" .. i .. "::'")
     end
