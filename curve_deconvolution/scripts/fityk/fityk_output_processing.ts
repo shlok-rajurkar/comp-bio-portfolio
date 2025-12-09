@@ -41,9 +41,9 @@ function main(workbook: ExcelScript.Workbook) {
 
   let sampleID = 0;
   let numMZCurves = 0;
-  let mZCurveArea: number | string | boolean = 0;
-  let mZCurveCenter: number | string | boolean = 0;
-  let fullWidthHalfMax: number | string | boolean = 0;
+  let mZCurveArea: number | string = 0;
+  let mZCurveCenter: number | string = 0;
+  let fullWidthHalfMax: number | string = 0;
 
 // console.log(values);
 
