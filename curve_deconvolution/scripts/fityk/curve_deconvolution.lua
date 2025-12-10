@@ -26,6 +26,10 @@ local modifiedIMBins = {
     3.65, 7.65, 10, 13, 18, 22, 26, 32
 }
 
+local hDLBins = {
+    3.65, 7.65, 9, 10.5, 13,
+}
+
 -- Function to restrict range to relevant x values
 function restrictRange(start, stop)
     F:execute("@*: A = a and not (1 < x)")
@@ -40,7 +44,7 @@ function placeSingleCurve(start, stop, curveType)
     print(stop)
 end
 
--- Runs fityk command "fit" 5 times (typically enough for the fit to not change much)
+-- Runs fityk command "fit" 2 times (typically enough for the fit to not change much)
 
 function fitCurves()
     F:execute("@*: fit")
@@ -66,6 +70,15 @@ function binLorentzian(bins)
     end
 end
 
+-- Function to place many voigt curves based on given bin values
+
+function binVoigt(bins)
+    for i = 1, #bins - 1, 1
+    do
+        placeSingleCurve(bins[i], bins[i+1], "Voigt")
+    end
+end
+
 -- Function to open CAP curve subset files
 
 function openCAPCurveSubset()
@@ -87,8 +100,8 @@ end
 
 
 openCAPCurveSubset()
-restrictRange(3.75, 32)
-binLorentzian(modifiedIMBins)
+restrictRange(3.75, 13)
+binVoigt(hDLBins)
 fitCurves()
 -- binGaussian(mzCorrBins)
 -- fitCurves()
