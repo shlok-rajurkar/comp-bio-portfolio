@@ -27,7 +27,11 @@ local modifiedIMBins = {
 }
 
 local hDLBins = {
-    3.65, 7.65, 9, 10.5, 13,
+    7.65, 9, 10.5, 13
+}
+
+local lDLBins = {
+
 }
 
 -- Function to restrict range to relevant x values
@@ -58,6 +62,13 @@ function binGaussian(bins)
     for i = 1, #bins - 1, 1
     do 
         placeSingleCurve(bins[i], bins[i+1], "Gaussian")
+    end
+end
+
+function binGaussianSimple()
+    for i = 1, 6, 1
+    do
+        F:execute("@*: guess Gaussian")
     end
 end
 
@@ -100,8 +111,9 @@ end
 
 
 openCAPCurveSubset()
-restrictRange(3.75, 13)
-binVoigt(hDLBins)
+restrictRange(18, 26.5)
+-- binGaussian(hDLBins)
+binGaussianSimple()
 fitCurves()
 -- binGaussian(mzCorrBins)
 -- fitCurves()
