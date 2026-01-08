@@ -30,6 +30,10 @@ local hDLBins = {
     7.65, 9, 10.5, 13
 }
 
+local hDLBinCenters = {
+    8.325, 9.5, 11.75
+}
+
 local lDLBins = {
 
 }
@@ -59,7 +63,7 @@ end
 function fixCentersInPlace(varCount)
     for i = 2, varCount, 3
     do
-        F:execute("$_" .. i .."= {$_" .. i .. "}")
+        F:execute("$_" .. i .. "= {$_" .. i .. "}")
     end
 end
 
@@ -96,6 +100,26 @@ function binLorentzian(bins)
     end
 end
 
+-- Function to place curve at midpoint of bin
+
+function binStrictLorentzian(datasetCount, binCenters)
+    for _ = 1, #binCenters, 1
+    do
+        F:execute("@*: guess Lorentzian")
+    end
+
+    local binCenterIndex = 1
+    for i = 2, (#binCenters * datasetCount * 3 - 1), 3
+    do
+        if binCenterIndex > #binCenters then
+            binCenterIndex = 1
+        end
+
+        F:execute("$_" .. i .." = ~" .. binCenters[binCenterIndex])
+
+        binCenterIndex = binCenterIndex + 1
+    end
+end
 -- Function to place many voigt curves based on given bin values
 
 function binVoigt(bins)
@@ -127,14 +151,17 @@ function fixPeaks()
     F:execute("@*: fix %.x0")
 end
 
-function analyzeCAPCurveSubsetn200()
+function analyzeCAPCurveSubsetn200(datasetCount)
     clearWorkspace()
-    openCAPCurveSubset(200)
+    openCAPCurveSubset(datasetCount)
     restrictRange(hDLBins)
-    binGaussian() -- change binning to work at center of range 
-    fixCentersInPlace(200 * #hDLBins * 3)
+    binStrictLorentzian(datasetCount, hDLBinCenters)
+    print("Prefix")
+    fixCentersInPlace(datasetCount * #hDLBinCenters * 3)
     fitCurves()
 end
+
+analyzeCAPCurveSubsetn200(200)
 
 -- clearWorkspace()
 -- openCAPCurveSubset()
