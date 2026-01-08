@@ -34,10 +34,16 @@ local lDLBins = {
 
 }
 
+-- Function to clear workspace
+
+function clearWorkspace()
+    F:execute("reset")
+end
+
 -- Function to restrict range to relevant x values
-function restrictRange(start, stop)
+function restrictRange(bins)
     F:execute("@*: A = a and not (1 < x)")
-    F:execute("@*: A = a or (" .. start .. "< x and x < " .. stop ..")")
+    F:execute("@*: A = a or (" .. bins[1] .. "< x and x < " .. bins[#bins] ..")")
 end
 
 -- Function to place single gaussian based on start and end values
@@ -46,6 +52,15 @@ function placeSingleCurve(start, stop, curveType)
     F:execute("@*: guess " .. curveType .. " [" .. start .. ":" .. stop .. "]")
     print(start)
     print(stop)
+end
+
+-- Fixes curve centers in place
+
+function fixCentersInPlace(varCount)
+    for i = 2, varCount, 3
+    do
+        F:execute("$_" .. i .."= {$_" .. i .. "}")
+    end
 end
 
 -- Runs fityk command "fit" 2 times (typically enough for the fit to not change much)
@@ -92,8 +107,8 @@ end
 
 -- Function to open CAP curve subset files
 
-function openCAPCurveSubset()
-    for i = 2, 31, 1
+function openCAPCurveSubset(datasetCount)
+    for i = 2, datasetCount + 1, 1
     do 
         F:execute("@+ < 'Z:/User Folders/SRajurkar/X3726/CAP Baseline subset n = 200/1200 pt data.csv:1:" .. i .. "::'")
     end
@@ -108,12 +123,25 @@ function exportPeaks()
     F:execute("@*: info peaks > " .. peakFolder .. "output.peaks") 
 end
 
+function fixPeaks()
+    F:execute("@*: fix %.x0")
+end
 
+function analyzeCAPCurveSubsetn200()
+    clearWorkspace()
+    openCAPCurveSubset(200)
+    restrictRange(hDLBins)
+    binGaussian() -- change binning to work at center of range 
+    fixCentersInPlace(200 * #hDLBins * 3)
+    fitCurves()
+end
 
-openCAPCurveSubset()
-restrictRange(18, 26.5)
+-- clearWorkspace()
+-- openCAPCurveSubset()
+-- restrictRange(hDLBins)
 -- binGaussian(hDLBins)
-binGaussianSimple()
-fitCurves()
--- binGaussian(mzCorrBins)
+-- -- binGaussianSimple()
+-- fitCurves()
+
+-- -- binGaussian(mzCorrBins)
 -- fitCurves()
